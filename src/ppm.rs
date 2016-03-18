@@ -15,7 +15,7 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
-            colors: vec![Color{r: 0, g: 0, b: 0}; width*height],
+            colors: vec![Color{r: 255, g: 255, b: 255}; width*height],
         }
     }
 
@@ -39,7 +39,9 @@ impl PPMImage {
         file.write_all(bufstr.as_bytes()).unwrap();
     }
 
-    pub fn set(&self, x: usize, y: usize, c: &Color) {
-        self.colors[x + y*self.width] = c;
+    pub fn set(&mut self, x: usize, y: usize, c: &Color) {
+        self.colors[x + y*self.width].r = c.r;
+        self.colors[x + y*self.width].g = c.g;
+        self.colors[x + y*self.width].b = c.b;
     }
 }
