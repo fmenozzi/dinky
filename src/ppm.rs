@@ -15,7 +15,7 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
-            colors: vec![Color{r: 255, g: 255, b: 255}; width*height],
+            colors: vec![Color{a: 1, r: 255, g: 255, b: 255}; width*height],
         }
     }
 
