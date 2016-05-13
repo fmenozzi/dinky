@@ -12,6 +12,7 @@ pub struct PPMImage {
 
 impl PPMImage {
     pub fn new(width: usize, height: usize) -> PPMImage {
+        // Blank white image
         PPMImage {
             width:  width,
             height: height,
@@ -40,6 +41,7 @@ impl PPMImage {
     }
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
+        self.colors[x + y*self.width].a = c.a;
         self.colors[x + y*self.width].r = c.r;
         self.colors[x + y*self.width].g = c.g;
         self.colors[x + y*self.width].b = c.b;
