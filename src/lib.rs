@@ -7,3 +7,4 @@ pub mod point;
 pub mod rect;
 pub mod bounds;
 pub mod triangle;
+pub mod bitmap;

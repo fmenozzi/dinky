@@ -1,12 +1,12 @@
 pub struct Color {
-    pub a: usize,
-    pub r: usize,
-    pub g: usize,
-    pub b: usize,
+    pub a: f32,
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
 }
 
 impl Color {
-    pub fn make_argb(a: usize, r: usize, g: usize, b: usize) -> Color {
+    pub fn make_argb(a: f32, r: f32, g: f32, b: f32) -> Color {
         Color {
             a: a,
             r: r,
@@ -15,9 +15,9 @@ impl Color {
         }
     }
 
-    pub fn make_rgb(r: usize, g: usize, b: usize) -> Color {
+    pub fn make_rgb(r: f32, g: f32, b: f32) -> Color {
         Color {
-            a: 1,
+            a: 1f32,
             r: r,
             g: g,
             b: b,

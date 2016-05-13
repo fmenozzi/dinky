@@ -21,3 +21,14 @@ impl Pixel {
         }
     }
 }
+
+impl Clone for Pixel {
+    fn clone(&self) -> Self {
+        Pixel {
+            a: self.a,
+            r: self.r,
+            g: self.g,
+            b: self.b,
+        }
+    }
+}

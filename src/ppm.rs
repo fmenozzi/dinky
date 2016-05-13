@@ -5,9 +5,9 @@ use std::fs::File;
 use std::io::prelude::*;
 
 pub struct PPMImage {
-        width:  usize,
-        height: usize,
-    pub colors: Vec<Color>,
+    width:  usize,
+    height: usize,
+    colors: Vec<Color>,
 }
 
 impl PPMImage {
@@ -16,7 +16,7 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
-            colors: vec![Color{a: 1, r: 255, g: 255, b: 255}; width*height],
+            colors: vec![Color{a: 1f32, r: 1f32, g: 1f32, b: 1f32}; width*height],
         }
     }
 
@@ -26,9 +26,9 @@ impl PPMImage {
         let dims   = format!("{} {} {}\n", self.width, self.height, 255);
         let mut bufstr = header + &dims;
         for i in 0..(self.width*self.height) {
-            let r = self.colors[i].r;
-            let g = self.colors[i].g;
-            let b = self.colors[i].b;
+            let r = (self.colors[i].r * 255f32) as i32;
+            let g = (self.colors[i].g * 255f32) as i32;
+            let b = (self.colors[i].b * 255f32) as i32;
 
             let c = format!("{} {} {}\n", r, g, b);
 

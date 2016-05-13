@@ -9,7 +9,7 @@ pub struct Triangle {
 
 
 impl Triangle {
-    pub fn new(a: &Point2<f32>, b: &Point2<f32>, c: &Point2<f32>) -> Triangle {
+    pub fn new(a: Point2<f32>, b: Point2<f32>, c: Point2<f32>) -> Triangle {
         Triangle {
             a: a,
             b: b,
