@@ -1,3 +1,6 @@
+use color::Color;
+
+#[derive(Copy, Clone)]
 pub struct Pixel {
     pub a: u8,
     pub r: u8,
@@ -20,15 +23,13 @@ impl Pixel {
             b: b,
         }
     }
-}
 
-impl Clone for Pixel {
-    fn clone(&self) -> Self {
-        Pixel {
-            a: self.a,
-            r: self.r,
-            g: self.g,
-            b: self.b,
-        }
+    pub fn to_color(&self) -> Color {
+        let a = (self.a as f32) / 256f32;
+        let r = (self.r as f32) / 256f32;
+        let g = (self.g as f32) / 256f32;
+        let b = (self.b as f32) / 256f32;
+
+        Color::make_argb(a,r,g,b)
     }
 }
