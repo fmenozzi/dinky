@@ -47,9 +47,9 @@ impl Canvas {
             }
 
             let mut i = (roi.top * w as f32 + roi.left) as usize;
-            for _ in 0..rect.height() as usize {
+            for _ in 0..roi.height() as usize {
                 // Draw row
-                for _ in 0..rect.width() as usize {
+                for _ in 0..roi.width() as usize {
                     self.bitmap.pixels[i] = if src_a == 255 {
                         srcpx
                     } else {
@@ -59,7 +59,7 @@ impl Canvas {
                 }
 
                 // Advance to next row
-                i += self.bitmap.width - rect.width() as usize;
+                i += self.bitmap.width - roi.width() as usize;
             }
         }
     }

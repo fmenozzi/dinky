@@ -74,16 +74,16 @@ impl Rect {
     pub fn intersects(&self, other: &Rect) -> bool {
         let l = self.left.max(other.left);
         let t = self.top.max(other.top);
-        let r = self.right.max(other.right);
-        let b = self.bottom.max(other.bottom);
+        let r = self.right.min(other.right);
+        let b = self.bottom.min(other.bottom);
 
         l < r && t < b
     }
     pub fn intersect(&mut self, other: &Rect) -> bool {
         let l = self.left.max(other.left);
         let t = self.top.max(other.top);
-        let r = self.right.max(other.right);
-        let b = self.bottom.max(other.bottom);
+        let r = self.right.min(other.right);
+        let b = self.bottom.min(other.bottom);
     
         if l < r && t < b {
             self.set_ltrb(l,t,r,b);
