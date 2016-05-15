@@ -32,8 +32,17 @@ impl Rect {
     pub fn width(&self)  -> f32 { self.right()  - self.left() }
     pub fn height(&self) -> f32 { self.bottom() - self.top()  }
 
-    pub fn is_empty(&self) -> bool {
+    pub fn empty(&self) -> bool {
         self.left() >= self.right() || self.top() >= self.bottom()
+    }
+
+    pub fn round(&self) -> Rect {
+        let round_left   = self.left.floor();
+        let round_top    = self.top.floor();
+        let round_right  = self.right.floor();
+        let round_bottom = self.bottom.floor();
+
+        Rect::make_ltrb(round_left, round_top, round_right, round_bottom)
     }
 
     pub fn set_ltrb(&mut self, l: f32, t: f32, r: f32, b: f32) {

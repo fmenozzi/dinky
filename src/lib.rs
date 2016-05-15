@@ -9,3 +9,4 @@ pub mod bounds;
 pub mod triangle;
 pub mod bitmap;
 pub mod canvas;
+pub mod util;
