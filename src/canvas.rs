@@ -92,13 +92,20 @@ impl Canvas {
         let bxcy_bycx = bx*cy - by*cx;
         let axcy_aycx = ax*cy - ay*cx;
 
-        for xi in roi.left as i32 .. roi.right as i32 + 1 {
-            for yi in roi.top as i32 .. roi.bottom as i32 + 1 {
-                let (x, y) = (xi as f32, yi as f32);
+        let x0 = roi.left;
 
-                // TODO: Forward difference
-                let alpha_numer = bxcy_bycx + by*x - bx*y - cy*x + cx*y;
-                let beta_numer  = axcy_aycx + ay*x - ax*y - cy*x + cx*y;
+        for yi in roi.top as i32 .. roi.bottom as i32 + 1 {
+            let y = yi as f32;
+
+            let alpha_numer_start = bxcy_bycx + by*x0 - bx*y - cy*x0 + cx*y;
+            let mut alpha_numer   = alpha_numer_start;
+
+            let beta_numer_start = axcy_aycx + ay*x0 - ax*y - cy*x0 + cx*y;
+            let mut beta_numer   = beta_numer_start;
+
+            for xi in roi.left as i32 .. roi.right as i32 + 1 {
+                alpha_numer += by - cy;
+                beta_numer  += ay - cy;
 
                 let alpha =  alpha_numer / denom;
                 let beta  = -beta_numer  / denom;
