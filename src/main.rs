@@ -29,9 +29,9 @@ fn main() {
 
     // Draw a triangle
     let tri = Triangle {
-        a: Point2::new(150f32, 150f32),
-        b: Point2::new(175f32, 175f32),
-        c: Point2::new(125f32, 175f32),
+        a: Point2::new(-150f32, -150f32),
+        b: Point2::new(50f32, 25f32),
+        c: Point2::new(25f32, 50f32),
     };
     canvas.fill_tri(&tri, &red);
 

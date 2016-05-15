@@ -73,6 +73,15 @@ impl Canvas {
             return;
         }
 
+        let (w, h) = (self.bitmap.width, self.bitmap.height);
+
+        // Clip triangle with canvas
+        let bounds = tri.bounds();
+        let mut roi = Rect::make_wh(w as f32, h as f32).round();
+        if !roi.intersect(&bounds) {
+            return;
+        }
+
         // Vertices
         let (ax, ay) = (tri.a.x, tri.a.y);
         let (bx, by) = (tri.b.x, tri.b.y);
@@ -83,10 +92,8 @@ impl Canvas {
         let bxcy_bycx = bx*cy - by*cx;
         let axcy_aycx = ax*cy - ay*cx;
 
-        // TODO: Clipping
-        let bounds = tri.bounds();
-        for xi in bounds.xmin..bounds.xmax+1 {
-            for yi in bounds.ymin..bounds.ymax+1 {
+        for xi in roi.left as i32 .. roi.right as i32 + 1 {
+            for yi in roi.top as i32 .. roi.bottom as i32 + 1 {
                 let (x, y) = (xi as f32, yi as f32);
 
                 // TODO: Forward difference
@@ -97,7 +104,7 @@ impl Canvas {
                 let beta  = -beta_numer  / denom;
 
                 if alpha >= 0f32 && beta >= 0f32 && alpha + beta <= 1f32 {
-                    let i = (xi + yi * self.bitmap.width as i32) as usize;
+                    let i = (xi + yi * w as i32) as usize;
 
                     self.bitmap.pixels[i] = if src_a == 255 {
                         srcpx

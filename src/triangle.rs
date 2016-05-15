@@ -1,5 +1,5 @@
 use cgmath::Point2;
-use bounds::BoundingBox;
+use rect::Rect;
 
 pub struct Triangle {
     pub a: Point2<f32>,
@@ -17,7 +17,14 @@ impl Triangle {
         }
     }
 
-    pub fn bounds(&self) -> BoundingBox {
-        BoundingBox::new(&self.a, &self.b, &self.c)
+    pub fn bounds(&self) -> Rect {
+        let xmin = self.a[0].min(self.b[0].min(self.c[0]));
+        let xmax = self.a[0].max(self.b[0].max(self.c[0]));
+        let ymin = self.a[1].min(self.b[1].min(self.c[1]));
+        let ymax = self.a[1].max(self.b[1].max(self.c[1]));
+
+        let mut rect = Rect{left: 0f32, top: 0f32, right: 0f32, bottom: 0f32};
+        rect.set_ltrb(xmin, ymin, xmax, ymax);
+        rect
     }
 }
