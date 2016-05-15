@@ -1,10 +1,10 @@
 use cgmath::Point2;
 
 pub struct BoundingBox {
-    xmin: i32,
-    xmax: i32,
-    ymin: i32,
-    ymax: i32,
+    pub xmin: i32,
+    pub xmax: i32,
+    pub ymin: i32,
+    pub ymax: i32,
 }
 
 impl BoundingBox {

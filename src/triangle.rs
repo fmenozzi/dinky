@@ -2,9 +2,9 @@ use cgmath::Point2;
 use bounds::BoundingBox;
 
 pub struct Triangle {
-    a: Point2<f32>,   
-    b: Point2<f32>,
-    c: Point2<f32>,
+    pub a: Point2<f32>,
+    pub b: Point2<f32>,
+    pub c: Point2<f32>,
 }
 
 
