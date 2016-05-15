@@ -11,9 +11,9 @@ pub struct Pixel {
 impl Pixel {
     pub fn pack_argb(a: u8, r: u8, g: u8, b: u8) -> Pixel {
         // Assert r,g,b are already in premul form
-        assert!(r <= a,   "r > a");
-        assert!(g <= a,   "g > a");
-        assert!(b <= a,   "b > a");
+        assert!(r <= a, "r > a");
+        assert!(g <= a, "g > a");
+        assert!(b <= a, "b > a");
 
         Pixel {
             a: a,
@@ -24,10 +24,10 @@ impl Pixel {
     }
 
     pub fn to_color(&self) -> Color {
-        let a = (self.a as f32) / 256f32;
-        let r = (self.r as f32) / 256f32;
-        let g = (self.g as f32) / 256f32;
-        let b = (self.b as f32) / 256f32;
+        let a = (self.a as f32) / 256.0;
+        let r = (self.r as f32) / 256.0;
+        let g = (self.g as f32) / 256.0;
+        let b = (self.b as f32) / 256.0;
 
         Color::make_argb(a,r,g,b)
     }

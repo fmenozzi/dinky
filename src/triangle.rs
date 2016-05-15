@@ -23,7 +23,7 @@ impl Triangle {
         let ymin = self.a[1].min(self.b[1].min(self.c[1]));
         let ymax = self.a[1].max(self.b[1].max(self.c[1]));
 
-        let mut rect = Rect{left: 0f32, top: 0f32, right: 0f32, bottom: 0f32};
+        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
         rect.set_ltrb(xmin, ymin, xmax, ymax);
         rect
     }

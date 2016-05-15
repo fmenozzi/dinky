@@ -7,17 +7,17 @@ pub struct Rect {
 
 impl Rect {
     pub fn make_ltrb(l: f32, t: f32, r: f32, b: f32) -> Rect {
-        let mut rect = Rect{left: 0f32, top: 0f32, right: 0f32, bottom: 0f32};
+        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
         rect.set_ltrb(l,t,r,b);
         rect
     }
     pub fn make_xywh(x: f32, y: f32, w: f32, h: f32) -> Rect {
-        let mut rect = Rect{left: 0f32, top: 0f32, right: 0f32, bottom: 0f32};
+        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
         rect.set_xywh(x, y, w, h);
         rect
     }
     pub fn make_wh(w: f32, h: f32) -> Rect {
-        let mut rect = Rect{left: 0f32, top: 0f32, right: 0f32, bottom: 0f32};
+        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
         rect.set_wh(w,h);
         rect
     }
@@ -58,8 +58,8 @@ impl Rect {
         self.bottom = y + h;
     }
     pub fn set_wh(&mut self, w: f32, h: f32) {
-        self.left   = 0f32;
-        self.top    = 0f32;
+        self.left   = 0.0;
+        self.top    = 0.0;
         self.right  = w;
         self.bottom = h;
     }

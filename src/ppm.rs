@@ -16,7 +16,7 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
-            colors: vec![Color{a: 1f32, r: 1f32, g: 1f32, b: 1f32}; width*height],
+            colors: vec![Color{a: 1.0, r: 1.0, g: 1.0, b: 1.0}; width*height],
         }
     }
 
@@ -26,9 +26,9 @@ impl PPMImage {
         let dims   = format!("{} {} {}\n", self.width, self.height, 255);
         let mut bufstr = header + &dims;
         for i in 0..(self.width*self.height) {
-            let r = (self.colors[i].r * 255f32) as i32;
-            let g = (self.colors[i].g * 255f32) as i32;
-            let b = (self.colors[i].b * 255f32) as i32;
+            let r = (self.colors[i].r * 255.0) as i32;
+            let g = (self.colors[i].g * 255.0) as i32;
+            let b = (self.colors[i].b * 255.0) as i32;
 
             let c = format!("{} {} {}\n", r, g, b);
 
