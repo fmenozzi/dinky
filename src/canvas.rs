@@ -61,8 +61,8 @@ impl Canvas {
                 b: Point2::new(roi.right, roi.top),
                 c: Point2::new(roi.right, roi.bottom),
             };
-            self.fill_tri_exp(&tri1, &color);
-            self.fill_tri_exp(&tri2, &color);
+            self.fill_tri_scanline(&tri1, &color);
+            self.fill_tri_scanline(&tri2, &color);
         }
     }
 
@@ -76,7 +76,7 @@ impl Canvas {
 
         let (mut curr_x_1, mut curr_x_2) = (ax, ax);
 
-        for y in ay as usize .. by.floor() as usize + 1 {
+        for y in ay as usize .. by as usize + 1 {
             for x in curr_x_1 as usize .. curr_x_2.floor() as usize + 1 {
                 let i = (x + y*(self.bitmap.width as usize)) as usize;
 
@@ -102,7 +102,7 @@ impl Canvas {
 
         let (mut curr_x_1, mut curr_x_2) = (cx, cx);
 
-        for y in (ay as usize .. cy.floor() as usize).rev() {
+        for y in (ay as usize .. cy as usize).rev() {
             curr_x_1 -= inv_slope_1;
             curr_x_2 -= inv_slope_2;
             for x in curr_x_1 as usize .. curr_x_2.floor() as usize + 1 {
@@ -117,7 +117,7 @@ impl Canvas {
         }
     }
 
-    pub fn fill_tri_exp(&mut self, tri: &Triangle, color: &Color) {
+    pub fn fill_tri_scanline(&mut self, tri: &Triangle, color: &Color) {
         let srcpx = color.to_pixel();
 
         // Skip transparent fill colors

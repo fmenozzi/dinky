@@ -54,8 +54,7 @@ fn main() {
             c: outside_points[p1],
         };
 
-        //canvas.fill_tri_exp(&tri, &colors[i]);
-        canvas.fill_tri_exp(&tri, &blue);
+        canvas.fill_tri_scanline(&tri, &blue);
     }
 
     // Save canvas to a file
