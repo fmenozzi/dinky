@@ -10,7 +10,7 @@ use std::path::Path;
 use std::cmp::{min, max};
 
 pub struct Canvas {
-    bitmap: Bitmap, 
+    bitmap: Bitmap,
 }
 
 impl Canvas {
@@ -146,13 +146,13 @@ impl Canvas {
 
             for x in xmin as usize .. xmax as usize {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
-                    let i = (x + y*w) as usize;
-
-                    self.bitmap.pixels[i] = if src_a == 255 {
+                    let px = if src_a == 255 {
                         srcpx
                     } else {
-                        util::blend(&srcpx, &self.bitmap.pixels[i])
+                        util::blend(&srcpx, &self.bitmap.get(x,y))
                     };
+
+                    self.bitmap.set(x, y, &px);
                 }
 
                 cx1 -= fdy12;

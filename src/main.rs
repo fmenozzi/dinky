@@ -12,7 +12,7 @@ use cgmath::Point2;
 use std::path::Path;
 
 fn main() {
-    let mut canvas = Canvas::new(Bitmap::new(256, 256));
+    let mut canvas = Canvas::new(Bitmap::new(500, 256));
 
     let white  = Color::make_argb(1.0, 1.0, 1.0, 1.0);
     let red    = Color::make_argb(1.0, 1.0, 0.0, 0.0);

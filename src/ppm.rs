@@ -41,9 +41,11 @@ impl PPMImage {
     }
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
-        self.colors[y + x*self.width].a = c.a;
-        self.colors[y + x*self.width].r = c.r;
-        self.colors[y + x*self.width].g = c.g;
-        self.colors[y + x*self.width].b = c.b;
+        let i = x + y*self.width;
+
+        self.colors[i].a = c.a;
+        self.colors[i].r = c.r;
+        self.colors[i].g = c.g;
+        self.colors[i].b = c.b;
     }
 }

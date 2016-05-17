@@ -19,14 +19,26 @@ impl Bitmap {
         }
     }
 
+    pub fn set(&mut self, x: usize, y: usize, p: &Pixel) {
+        let i = x + y*self.width;
+
+        self.pixels[i].a = p.a;
+        self.pixels[i].r = p.r;
+        self.pixels[i].g = p.g;
+        self.pixels[i].b = p.b;
+    }
+
+    pub fn get(&self, x: usize, y: usize) -> Pixel {
+        let i = x + y*self.width;
+        self.pixels[i]
+    }
+
     pub fn write(&self, path: &Path) {
         let mut image = PPMImage::new(self.width, self.height);
 
-        let mut k = 0;
         for x in 0..self.width {
             for y in 0..self.height {
-                image.set(x, y, &self.pixels[k].to_color());
-                k += 1;
+                image.set(x, y, &self.get(x, y).to_color());
             }
         }
 
