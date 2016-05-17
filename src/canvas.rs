@@ -67,6 +67,8 @@ impl Canvas {
         }
     }
 
+    // Courtesy of http://forum.devmaster.net/t/advanced-rasterization/6145
+    // TODO: Currently requires CW vertex ordering
     pub fn fill_tri(&mut self, tri: &Triangle, color: &Color) {
         let srcpx = color.to_pixel();
 
@@ -76,14 +78,16 @@ impl Canvas {
             return;
         }
 
+        let (w,h) = (self.bitmap.width, self.bitmap.height);
+
         // Clip triangle with canvas
-        /*
         let bounds = tri.bounds();
         let mut roi = Rect::make_wh(w as f32, h as f32).round();
         if !roi.intersect(&bounds) {
             return;
-        */
+        }
 
+        // 28.4 fixed-point coordinates
         let x1 = (tri.a.x * 16.0).round() as i32;
         let x2 = (tri.b.x * 16.0).round() as i32;
         let x3 = (tri.c.x * 16.0).round() as i32;
@@ -92,6 +96,7 @@ impl Canvas {
         let y2 = (tri.b.y * 16.0).round() as i32;
         let y3 = (tri.c.y * 16.0).round() as i32;
 
+        // Deltas
         let dx12 = x1-x2;
         let dx23 = x2-x3;
         let dx31 = x3-x1;
@@ -100,6 +105,7 @@ impl Canvas {
         let dy23 = y2-y3;
         let dy31 = y3-y1;
 
+        // Fixed-point deltas
         let fdx12 = dx12 << 4;
         let fdx23 = dx23 << 4;
         let fdx31 = dx31 << 4;
@@ -108,14 +114,22 @@ impl Canvas {
         let fdy23 = dy23 << 4;
         let fdy31 = dy31 << 4;
 
-        let xmin = (min(x1, min(x2, x3)) + 0xf) >> 4;
-        let xmax = (max(x1, max(x2, x3)) + 0xf) >> 4;
-        let ymin = (min(y1, min(y2, y3)) + 0xf) >> 4;
-        let ymax = (max(y1, max(y2, y3)) + 0xf) >> 4;
+        // Apply clipping
+        let mut xmin = (min(x1, min(x2, x3)) + 0xf) >> 4;
+        let mut xmax = (max(x1, max(x2, x3)) + 0xf) >> 4;
+        let mut ymin = (min(y1, min(y2, y3)) + 0xf) >> 4;
+        let mut ymax = (max(y1, max(y2, y3)) + 0xf) >> 4;
+        xmin = max(xmin, roi.left   as i32);
+        xmax = min(xmax, roi.right  as i32);
+        ymin = max(ymin, roi.top    as i32);
+        ymax = min(ymax, roi.bottom as i32);
 
+        // Half-edge constants
         let mut c1 = dy12*x1 - dx12*y1;
         let mut c2 = dy23*x2 - dx23*y2;
         let mut c3 = dy31*x3 - dx31*y3;
+
+        // Correct for fill convention (avoid gaps/double-draws)
         if dy12 > 0 || (dy12 == 0 && dx12 < 0) {c1 -= 1;}
         if dy23 > 0 || (dy23 == 0 && dx23 < 0) {c2 -= 1;}
         if dy31 > 0 || (dy31 == 0 && dx31 < 0) {c3 -= 1;}
@@ -124,14 +138,15 @@ impl Canvas {
         let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
         let mut cy3 = c3 + dx31*(ymin << 4) - dy31*(xmin << 4);
 
-        for y in ymin..ymax {
+        // Rasterize
+        for y in ymin as usize .. ymax as usize {
             let mut cx1 = cy1;
             let mut cx2 = cy2;
             let mut cx3 = cy3;
 
-            for x in xmin..xmax {
+            for x in xmin as usize .. xmax as usize {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
-                    let i = (x + y*(self.bitmap.width as i32)) as usize;
+                    let i = (x + y*w) as usize;
 
                     self.bitmap.pixels[i] = if src_a == 255 {
                         srcpx

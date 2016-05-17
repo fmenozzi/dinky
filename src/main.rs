@@ -24,12 +24,28 @@ fn main() {
     canvas.clear(&white);
 
     // Draw some rectangles
-    canvas.fill_rect(&Rect::make_xywh(50.0,  50.0, 100.0, 50.0), &red);
-    canvas.fill_rect(&Rect::make_xywh(75.0,  75.0, 50.0,  50.0), &green);
-    canvas.fill_rect(&Rect::make_xywh(100.0, 30.0, 50.0, 100.0), &blue);
-    canvas.fill_rect(&Rect::make_xywh(65.0,  65.0, 50.0,  50.0), &yellow);
+    canvas.fill_rect(&Rect::make_xywh(50.0, 50.0, 100.0, 50.0), &red);
+    canvas.fill_rect(&Rect::make_xywh(75.0, 75.0, 50.0,  50.0), &green);
+    canvas.fill_rect(&Rect::make_xywh(90.0, 30.0, 50.0, 100.0), &blue);
+    canvas.fill_rect(&Rect::make_xywh(65.0, 65.0, 50.0,  50.0), &yellow);
 
-    // Draw a convex polygon
+    // Draw a triangle
+    let inside_tri = Triangle {
+        a: Point2::new(50.0, 200.0),
+        b: Point2::new(70.0, 230.0),
+        c: Point2::new(40.0, 220.0),
+    };
+    canvas.fill_tri(&inside_tri, &red);
+
+    // Draw a clipped triangle
+    let clipped_tri = Triangle {
+        a: Point2::new( 30.0, 150.0),
+        b: Point2::new( 30.0, 180.0),
+        c: Point2::new(-30.0, 165.0),
+    };
+    canvas.fill_tri(&clipped_tri, &red);
+
+    // Draw a diamond polygon
     let (a,b,c) = (0.0, 50.0, 100.0);
     let d = 120.0;
     let center = Point2::new(b+d, b+d);
