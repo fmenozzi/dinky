@@ -54,13 +54,13 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.bottom),
-                c: Point2::new(roi.left,  roi.bottom),
+                b: Point2::new(roi.left,  roi.bottom),
+                c: Point2::new(roi.right, roi.bottom),
             };
             let tri2 = Triangle {
                 a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.top),
-                c: Point2::new(roi.right, roi.bottom),
+                b: Point2::new(roi.right, roi.bottom),
+                c: Point2::new(roi.right, roi.top),
             };
             self.fill_tri_halfspace(&tri1, &color);
             self.fill_tri_halfspace(&tri2, &color);
@@ -238,11 +238,9 @@ impl Canvas {
 
             for x in xmin..xmax {
 
-                println!("cx1, cx2, cx3: {}, {}, {}", cx1, cx2, cx3);
+                //println!("cx1, cx2, cx3: {}, {}, {}", cx1, cx2, cx3);
 
-                if cx1 > 0 && cx2 > 0 && cx3 > 0 {
-                    println!("LSKDJFLKDSJF");
-
+                if cx1 < 0 && cx2 < 0 && cx3 < 0 {
                     let i = (x + y*(self.bitmap.width as i32)) as usize;
 
                     self.bitmap.pixels[i] = if src_a == 255 {
