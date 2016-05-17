@@ -16,8 +16,8 @@ fn main() {
 
     let white  = Color::make_argb(1.0, 1.0, 1.0, 1.0);
     let red    = Color::make_argb(1.0, 1.0, 0.0, 0.0);
-    let green  = Color::make_argb(0.5,  0.0, 1.0, 0.0);
-    let blue   = Color::make_argb(0.5,  0.0, 0.0, 1.0);
+    let green  = Color::make_argb(0.5, 0.0, 1.0, 0.0);
+    let blue   = Color::make_argb(0.5, 0.0, 0.0, 1.0);
     let yellow = Color::make_argb(0.5, 1.0, 1.0, 0.0);
 
     // White canvas
