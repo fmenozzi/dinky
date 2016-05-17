@@ -8,4 +8,5 @@ pub mod rect;
 pub mod triangle;
 pub mod bitmap;
 pub mod canvas;
+pub mod shader;
 pub mod util;
