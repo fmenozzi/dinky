@@ -24,10 +24,12 @@ fn main() {
     canvas.clear(&white);
 
     // Draw some rectangles
+    /*
     canvas.fill_rect(&Rect::make_xywh(50.0,  50.0, 100.0, 50.0), &red);
     canvas.fill_rect(&Rect::make_xywh(75.0,  75.0, 50.0,  50.0), &green);
     canvas.fill_rect(&Rect::make_xywh(100.0, 30.0, 50.0, 100.0), &blue);
     canvas.fill_rect(&Rect::make_xywh(65.0,  65.0, 50.0,  50.0), &yellow);
+    */
 
     // Draw a convex polygon
     let (a,b,c) = (0.0, 50.0, 100.0);
@@ -54,7 +56,7 @@ fn main() {
             c: outside_points[p1],
         };
 
-        canvas.fill_tri_scanline(&tri, &blue);
+        canvas.fill_tri_halfspace(&tri, &blue);
     }
 
     // Save canvas to a file

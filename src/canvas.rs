@@ -9,6 +9,7 @@ use cgmath::Point2;
 
 use std::path::Path;
 use std::cmp::Ordering;
+use std::cmp::{min, max};
 
 pub struct Canvas {
     bitmap: Bitmap, 
@@ -61,8 +62,8 @@ impl Canvas {
                 b: Point2::new(roi.right, roi.top),
                 c: Point2::new(roi.right, roi.bottom),
             };
-            self.fill_tri_scanline(&tri1, &color);
-            self.fill_tri_scanline(&tri2, &color);
+            self.fill_tri_halfspace(&tri1, &color);
+            self.fill_tri_halfspace(&tri2, &color);
         }
     }
 
@@ -156,10 +157,8 @@ impl Canvas {
         };
 
         if (by-cy).abs() < 0.001 {
-            //println!("BOTTOM");
             self.fill_bottom_flat_tri(&sorted_tri, &srcpx);
         } else if (ay-by).abs() < 0.001 {
-            //println!("TOP");
             self.fill_top_flat_tri(&sorted_tri, &srcpx);
         } else {
             let dx = 0.0; // TODO: Fill this in once other cases are working
@@ -180,6 +179,87 @@ impl Canvas {
 
             self.fill_bottom_flat_tri(&bottom_tri, &srcpx);
             self.fill_top_flat_tri(&top_tri, &srcpx);
+        }
+    }
+
+    pub fn fill_tri_halfspace(&mut self, tri: &Triangle, color: &Color) {
+        let srcpx = color.to_pixel();
+
+        // Skip transparent fill colors
+        let src_a = srcpx.a;
+        if src_a == 0 {
+            return;
+        }
+
+        let x1 = (tri.a.x * 16.0).round() as i32;
+        let x2 = (tri.b.x * 16.0).round() as i32;
+        let x3 = (tri.c.x * 16.0).round() as i32;
+
+        let y1 = (tri.a.y * 16.0).round() as i32;
+        let y2 = (tri.b.y * 16.0).round() as i32;
+        let y3 = (tri.c.y * 16.0).round() as i32;
+
+        let dx12 = x1-x2;
+        let dx23 = x2-x3;
+        let dx31 = x3-x1;
+
+        let dy12 = y1-y2;
+        let dy23 = y2-y3;
+        let dy31 = y3-y1;
+
+        let fdx12 = dx12 << 4;
+        let fdx23 = dx23 << 4;
+        let fdx31 = dx31 << 4;
+
+        let fdy12 = dy12 << 4;
+        let fdy23 = dy23 << 4;
+        let fdy31 = dy31 << 4;
+
+        let xmin = (min(x1, min(x2, x3)) + 0xf) >> 4;
+        let xmax = (max(x1, max(x2, x3)) + 0xf) >> 4;
+        let ymin = (min(y1, min(y2, y3)) + 0xf) >> 4;
+        let ymax = (max(y1, max(y2, y3)) + 0xf) >> 4;
+
+        let mut c1 = dy12*x1 - dx12*y1;
+        let mut c2 = dy23*x2 - dx23*y2;
+        let mut c3 = dy31*x3 - dx31*y3;
+        if dy12 < 0 || (dy12 == 0 && dx12 > 0) {c1 += 1;}
+        if dy23 < 0 || (dy23 == 0 && dx23 > 0) {c2 += 1;}
+        if dy31 < 0 || (dy31 == 0 && dx31 > 0) {c3 += 1;}
+
+        let mut cy1 = c1 + dx12*(ymin << 4) - dy12*(xmin << 4);
+        let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
+        let mut cy3 = c3 + dx31*(ymin << 4) - dy31*(xmin << 4);
+
+        for y in ymin..ymax {
+            let mut cx1 = cy1;
+            let mut cx2 = cy2;
+            let mut cx3 = cy3;
+
+            for x in xmin..xmax {
+
+                println!("cx1, cx2, cx3: {}, {}, {}", cx1, cx2, cx3);
+
+                if cx1 > 0 && cx2 > 0 && cx3 > 0 {
+                    println!("LSKDJFLKDSJF");
+
+                    let i = (x + y*(self.bitmap.width as i32)) as usize;
+
+                    self.bitmap.pixels[i] = if src_a == 255 {
+                        srcpx
+                    } else {
+                        util::blend(&srcpx, &self.bitmap.pixels[i])
+                    };
+                }
+
+                cx1 -= fdy12;
+                cx2 -= fdy23;
+                cx3 -= fdy31;
+            }
+
+            cy1 += fdx12;
+            cy2 += fdx23;
+            cy3 += fdx31;
         }
     }
 
