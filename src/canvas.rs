@@ -54,13 +54,13 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.left,  roi.bottom),
-                c: Point2::new(roi.right, roi.bottom),
+                b: Point2::new(roi.right, roi.bottom),
+                c: Point2::new(roi.left,  roi.bottom),
             };
             let tri2 = Triangle {
                 a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.bottom),
-                c: Point2::new(roi.right, roi.top),
+                b: Point2::new(roi.right, roi.top),
+                c: Point2::new(roi.right, roi.bottom),
             };
             self.fill_tri_halfspace(&tri1, &color);
             self.fill_tri_halfspace(&tri2, &color);
@@ -223,9 +223,9 @@ impl Canvas {
         let mut c1 = dy12*x1 - dx12*y1;
         let mut c2 = dy23*x2 - dx23*y2;
         let mut c3 = dy31*x3 - dx31*y3;
-        if dy12 < 0 || (dy12 == 0 && dx12 > 0) {c1 += 1;}
-        if dy23 < 0 || (dy23 == 0 && dx23 > 0) {c2 += 1;}
-        if dy31 < 0 || (dy31 == 0 && dx31 > 0) {c3 += 1;}
+        if dy12 > 0 || (dy12 == 0 && dx12 < 0) {c1 -= 1;}
+        if dy23 > 0 || (dy23 == 0 && dx23 < 0) {c2 -= 1;}
+        if dy31 > 0 || (dy31 == 0 && dx31 < 0) {c3 -= 1;}
 
         let mut cy1 = c1 + dx12*(ymin << 4) - dy12*(xmin << 4);
         let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
@@ -237,9 +237,6 @@ impl Canvas {
             let mut cx3 = cy3;
 
             for x in xmin..xmax {
-
-                //println!("cx1, cx2, cx3: {}, {}, {}", cx1, cx2, cx3);
-
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
                     let i = (x + y*(self.bitmap.width as i32)) as usize;
 
