@@ -54,7 +54,7 @@ fn main() {
             c: outside_points[p1],
         };
 
-        canvas.fill_tri_halfspace(&tri, &blue);
+        canvas.fill_tri(&tri, &colors[i]);
     }
 
     // Save canvas to a file
