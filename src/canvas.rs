@@ -52,15 +52,25 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 // CW
+                /*
                 a: Point2::new(roi.left,  roi.top),
                 b: Point2::new(roi.right, roi.bottom),
                 c: Point2::new(roi.left,  roi.bottom),
+                */
+                a: Point2::new(roi.left,  roi.top),
+                b: Point2::new(roi.right, roi.top),
+                c: Point2::new(roi.left, roi.bottom),
             };
             let tri2 = Triangle {
                 // CW
+                /*
                 a: Point2::new(roi.left,  roi.top),
                 b: Point2::new(roi.right, roi.top),
                 c: Point2::new(roi.right, roi.bottom),
+                */
+                a: Point2::new(roi.right, roi.top),
+                b: Point2::new(roi.right, roi.bottom),
+                c: Point2::new(roi.left,  roi.bottom),
             };
             self.fill_tri(&tri1, &color);
             self.fill_tri(&tri2, &color);
@@ -86,17 +96,6 @@ impl Canvas {
         if !roi.intersect(&bounds) {
             return;
         }
-
-        // Get lone x coordinate
-        let lone_x = if tri.a.y == tri.b.y {
-            tri.c.x
-        } else if tri.b.y == tri.c.y {
-            tri.a.x
-        } else if tri.c.y == tri.a.y {
-            tri.b.x
-        } else {
-            -1.0
-        };
 
         // 28.4 fixed-point coordinates
         let x1 = (tri.a.x * 16.0).round() as i32;
@@ -149,15 +148,30 @@ impl Canvas {
         let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
         let mut cy3 = c3 + dx31*(ymin << 4) - dy31*(xmin << 4);
 
+        // Get lone point
+        let lone_pt = if tri.a.y == tri.b.y {
+            Some(tri.c)
+        } else if tri.b.y == tri.c.y {
+            Some(tri.a)
+        } else if tri.c.y == tri.a.y {
+            Some(tri.b)
+        } else {
+            None
+        };
+        let (lone_x, lone_y) = match lone_pt {
+            Some(pt) => (pt.x, pt.y),
+            None     => (0.0, 0.0),
+        };
+
         // Rasterize
         for y in ymin as usize .. ymax as usize {
             let mut cx1 = cy1;
             let mut cx2 = cy2;
             let mut cx3 = cy3;
 
-            // Determine row start and end
             let mut x0 = lone_x as usize;
             let mut x1 = if y == ymin as usize {lone_x as usize} else {xmax as usize};
+
             let mut started = false;
             for x in xmin as usize .. xmax as usize {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
@@ -176,6 +190,7 @@ impl Canvas {
                 cx2 -= fdy23;
                 cx3 -= fdy31;
             }
+
             for x in x0..x1 {
                 let px = if src_a == 255 {
                     srcpx
