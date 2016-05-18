@@ -52,22 +52,12 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 // CW
-                /*
-                a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.bottom),
-                c: Point2::new(roi.left,  roi.bottom),
-                */
                 a: Point2::new(roi.left,  roi.top),
                 b: Point2::new(roi.right, roi.top),
                 c: Point2::new(roi.left, roi.bottom),
             };
             let tri2 = Triangle {
                 // CW
-                /*
-                a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.top),
-                c: Point2::new(roi.right, roi.bottom),
-                */
                 a: Point2::new(roi.right, roi.top),
                 b: Point2::new(roi.right, roi.bottom),
                 c: Point2::new(roi.left,  roi.bottom),
@@ -169,39 +159,6 @@ impl Canvas {
             let mut cx2 = cy2;
             let mut cx3 = cy3;
 
-            let mut x0 = lone_x as usize;
-            let mut x1 = if y == ymin as usize {lone_x as usize} else {xmax as usize};
-
-            let mut started = false;
-            for x in xmin as usize .. xmax as usize {
-                if cx1 < 0 && cx2 < 0 && cx3 < 0 {
-                    if !started {
-                        x0 = x;
-                        started = true;
-                    }
-                } else {
-                    if started {
-                        x1 = x;
-                        break;
-                    }
-                }
-
-                cx1 -= fdy12;
-                cx2 -= fdy23;
-                cx3 -= fdy31;
-            }
-
-            for x in x0..x1 {
-                let px = if src_a == 255 {
-                    srcpx
-                } else {
-                    util::blend(&srcpx, &self.bitmap.get(x,y))
-                };
-
-                self.bitmap.set(x, y, &px);
-            }
-
-            /*
             for x in xmin as usize .. xmax as usize {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
                     let px = if src_a == 255 {
@@ -217,7 +174,6 @@ impl Canvas {
                 cx2 -= fdy23;
                 cx3 -= fdy31;
             }
-            */
 
             cy1 += fdx12;
             cy2 += fdx23;
