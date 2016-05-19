@@ -17,3 +17,14 @@ pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
 
     Pixel::pack_argb(final_a as u8, final_r as u8, final_g as u8, final_b as u8)
 }
+
+// TODO: Use slices instead of vectors for read access
+pub fn blend_row(src: &Vec<Pixel>, dst: &Vec<Pixel>) -> Vec<Pixel> {
+    assert!(src.len() == dst.len(), "src and dst rows not the same size");
+
+    let mut res: Vec<Pixel> = Vec::with_capacity(src.len());
+    for i in 0..src.len() {
+        res.push(if src[i].a == 255 {src[i]} else {blend(&src[i], &dst[i])});
+    }
+    res
+}

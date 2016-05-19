@@ -1,13 +1,16 @@
 use bitmap::Bitmap;
 use color::Color;
+use pixel::Pixel;
 use rect::Rect;
 use triangle::Triangle;
+use shader::Shader;
+
 use util;
 
 use cgmath::Point2;
 
 use std::path::Path;
-use std::cmp::{Ordering, min, max};
+use std::cmp::{min, max};
 
 pub struct Canvas {
     bitmap: Bitmap,
@@ -31,16 +34,8 @@ impl Canvas {
         }
     }
 
-    pub fn fill_rect(&mut self, rect: &Rect, color: &Color) {
+    pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &S) {
         if !rect.empty() {
-            let srcpx = color.to_pixel();
-
-            // Skip transparent fill colors
-            let src_a = srcpx.a;
-            if src_a == 0 {
-                return;
-            }
-
             let (w, h) = (self.bitmap.width, self.bitmap.height);
 
             // Clip rectangle with canvas
@@ -62,22 +57,14 @@ impl Canvas {
                 b: Point2::new(roi.right, roi.bottom),
                 c: Point2::new(roi.left,  roi.bottom),
             };
-            self.fill_tri(&tri1, &color);
-            self.fill_tri(&tri2, &color);
+            self.shade_tri(&tri1, shader);
+            self.shade_tri(&tri2, shader);
         }
     }
 
     // Courtesy of http://forum.devmaster.net/t/advanced-rasterization/6145
     // TODO: Currently requires CW vertex ordering
-    pub fn fill_tri(&mut self, tri: &Triangle, color: &Color) {
-        let srcpx = color.to_pixel();
-
-        // Skip transparent fill colors
-        let src_a = srcpx.a;
-        if src_a == 0 {
-            return;
-        }
-
+    pub fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &S) {
         let (w,h) = (self.bitmap.width, self.bitmap.height);
 
         // Clip triangle with canvas
@@ -138,36 +125,23 @@ impl Canvas {
         let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
         let mut cy3 = c3 + dx31*(ymin << 4) - dy31*(xmin << 4);
 
-        // Get lone point
-        let lone_pt = if tri.a.y == tri.b.y {
-            Some(tri.c)
-        } else if tri.b.y == tri.c.y {
-            Some(tri.a)
-        } else if tri.c.y == tri.a.y {
-            Some(tri.b)
-        } else {
-            None
-        };
-        let (lone_x, lone_y) = match lone_pt {
-            Some(pt) => (pt.x, pt.y),
-            None     => (0.0, 0.0),
-        };
-
         // Rasterize
         for y in ymin as usize .. ymax as usize {
             let mut cx1 = cy1;
             let mut cx2 = cy2;
             let mut cx3 = cy3;
 
+            let count = (xmax - xmin) as usize;
+            let shaded_row = shader.shade_row(xmin as usize, y as usize, count);
+            let mut dst_row: Vec<Pixel> = Vec::with_capacity(count);
+            for i in 0..count {
+                dst_row.push(self.bitmap.get(i + xmin as usize, y));
+            }
+            let blended_row = util::blend_row(&shaded_row, &dst_row);
+
             for x in xmin as usize .. xmax as usize {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
-                    let px = if src_a == 255 {
-                        srcpx
-                    } else {
-                        util::blend(&srcpx, &self.bitmap.get(x,y))
-                    };
-
-                    self.bitmap.set(x, y, &px);
+                    self.bitmap.set(x, y, &blended_row[x-xmin as usize]);
                 }
 
                 cx1 -= fdy12;
