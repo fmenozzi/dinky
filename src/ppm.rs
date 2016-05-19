@@ -1,4 +1,5 @@
 use color::Color;
+use pixel::Pixel;
 
 use std::path::Path;
 use std::fs::File;
@@ -46,13 +47,11 @@ impl PPMImage {
         for line in lines {
             let components: Vec<&str> = (&line).split(" ").collect();
 
-            let r = components[0].parse::<usize>().unwrap() as f32 / 255.0;
-            let g = components[1].parse::<usize>().unwrap() as f32 / 255.0;
-            let b = components[2].parse::<usize>().unwrap() as f32 / 255.0;
+            let r = components[0].parse::<usize>().unwrap() as u8;
+            let g = components[1].parse::<usize>().unwrap() as u8;
+            let b = components[2].parse::<usize>().unwrap() as u8;
 
-            let color = Color::make_rgb(r, g, b);
-
-            self.colors[i] = color;
+            self.colors[i] = Pixel::pack_rgb(r, g, b).to_color();
 
             i += 1;
         }
@@ -65,13 +64,11 @@ impl PPMImage {
         let dims   = format!("{} {} {}\n", w, h, 255);
         let mut bufstr = header + &dims;
         for i in 0..w*h {
-            let r = (self.colors[i].r * 255.0) as i32;
-            let g = (self.colors[i].g * 255.0) as i32;
-            let b = (self.colors[i].b * 255.0) as i32;
+            let pixel = self.colors[i].to_pixel();
 
-            let c = format!("{} {} {}\n", r, g, b);
+            let colorstr = format!("{} {} {}\n", pixel.r, pixel.g, pixel.b);
 
-            bufstr = bufstr + &c;
+            bufstr = bufstr + &colorstr;
         }
 
         // Write color buffer to .ppm file

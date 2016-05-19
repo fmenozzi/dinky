@@ -23,6 +23,10 @@ impl Pixel {
         }
     }
 
+    pub fn pack_rgb(r: u8, g: u8, b: u8) -> Pixel {
+        Pixel::pack_argb(255, r, g, b)
+    }
+
     pub fn to_color(&self) -> Color {
         let a = (self.a as f32) / 256.0;
         let r = (self.r as f32) / 256.0;
