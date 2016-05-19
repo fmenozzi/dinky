@@ -3,7 +3,7 @@ use color::Color;
 use pixel::Pixel;
 use rect::Rect;
 use triangle::Triangle;
-use shader::Shader;
+use shader::{Shader, Shaders};
 use util::blend_row;
 
 use cgmath::Point2;
@@ -31,6 +31,18 @@ impl Canvas {
         for i in 0..w*h {
             self.bitmap.pixels[i] = srcpx;
         }
+    }
+
+    pub fn fill_bitmap_rect(&mut self, src: &Bitmap, dst: &Rect) {
+        let (w, h) = (self.bitmap.width, self.bitmap.height);
+        let mut roi = Rect::make_wh(w as f32, h as f32);
+        if !roi.intersect(&dst.round()) {
+            return;
+        }
+
+        let shader = Shaders::from_color(Color::black());
+
+        self.shade_rect(&roi, &shader);
     }
 
     pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &S) {
