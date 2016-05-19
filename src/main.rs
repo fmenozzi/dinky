@@ -3,82 +3,76 @@ extern crate cgmath;
 
 use dinky::color::Color;
 use dinky::rect::Rect;
-use dinky::triangle::Triangle;
 use dinky::canvas::Canvas;
 use dinky::bitmap::Bitmap;
-
 use dinky::shader::Shaders;
-
-use cgmath::Point2;
 
 use std::path::Path;
 
-fn main() {
-    let mut canvas = Canvas::new(Bitmap::new(500, 256));
+fn draw_solid_ramp(pathstr: &str) {
+    let mut canvas = Canvas::new(Bitmap::new(256, 196));
 
-    let red    = Color::make_argb(1.0, 1.0, 0.0, 0.0);
-    let green  = Color::make_argb(0.5, 0.0, 1.0, 0.0);
-    let blue   = Color::make_argb(0.5, 0.0, 0.0, 1.0);
-    let yellow = Color::make_argb(0.5, 1.0, 1.0, 0.0);
+    let (ramp_w, ramp_h) = (1, 28);
 
-    let red_shader    = Shaders::from_color(red);
-    let green_shader  = Shaders::from_color(green);
-    let blue_shader   = Shaders::from_color(blue);
-    let yellow_shader = Shaders::from_color(yellow);
+    let c = 1.0/512.0;
+    let d = 1.0/256.0;
 
-    // White canvas
-    canvas.clear(&Color::white());
-
-    // Draw some rectangles
-    canvas.shade_rect(&Rect::make_xywh(50.0, 50.0, 100.0, 50.0), &red_shader);
-    canvas.shade_rect(&Rect::make_xywh(75.0, 75.0, 50.0,  50.0), &green_shader);
-    canvas.shade_rect(&Rect::make_xywh(90.0, 30.0, 50.0, 100.0), &blue_shader);
-    canvas.shade_rect(&Rect::make_xywh(65.0, 65.0, 50.0,  50.0), &yellow_shader);
-
-    // Draw a triangle
-    let inside_tri = Triangle {
-        a: Point2::new(50.0, 200.0),
-        b: Point2::new(70.0, 230.0),
-        c: Point2::new(40.0, 220.0),
-    };
-    canvas.shade_tri(&inside_tri, &red_shader);
-
-    // Draw a clipped triangle
-    let clipped_tri = Triangle {
-        a: Point2::new( 30.0, 150.0),
-        b: Point2::new( 30.0, 180.0),
-        c: Point2::new(-30.0, 165.0),
-    };
-    canvas.shade_tri(&clipped_tri, &red_shader);
-
-    // Draw a diamond polygon
-    let (a,b,c) = (0.0, 50.0, 100.0);
-    let d = 120.0;
-    let center = Point2::new(b+d, b+d);
-    let outside_points = [
-        Point2::new(b+d, a+d),
-        Point2::new(c+d, b+d),
-        Point2::new(b+d, c+d),
-        Point2::new(a+d, b+d),
+    let rec = [
+        (Color::make_argb(1.0,     c,     c,     c), Color::make_argb(0.0,   d,   d,   d)),  // Grey
+        (Color::make_argb(1.0, 1.0-c,   0.0,   0.0), Color::make_argb(0.0,  -d, 0.0, 0.0)),  // Red
+        (Color::make_argb(1.0,   0.0,     c,     c), Color::make_argb(0.0, 0.0,   d,   d)),  // Cyan
+        (Color::make_argb(1.0,   0.0, 1.0-c,   0.0), Color::make_argb(0.0, 0.0,  -d, 0.0)),  // Green
+        (Color::make_argb(1.0,     c,   0.0,     c), Color::make_argb(0.0,   d, 0.0,   d)),  // Magenta
+        (Color::make_argb(1.0,   0.0,   0.0, 1.0-c), Color::make_argb(0.0, 0.0, 0.0,  -d)),  // Blue
+        (Color::make_argb(1.0,     c,     c,   0.0), Color::make_argb(0.0,   d,   d, 0.0)),  // Yellow
     ];
-    let color_shaders = [
-        red_shader,
-        green_shader,
-        blue_shader,
-        yellow_shader,
-    ];
-    for i in 0..outside_points.len() {
-        let (p0, p1) = (i, (i+1) % outside_points.len());
 
-        let tri = Triangle {
-            a: center,
-            b: outside_points[p0],
-            c: outside_points[p1],
-        };
+    for y in 0..rec.len() {
+        let (mut color, delta) = rec[y];
+        for x in 0..256 {
+            let rect = Rect::make_xywh((x*ramp_w) as f32, (y*ramp_h) as f32, ramp_w as f32, ramp_h as f32);
 
-        canvas.shade_tri(&tri, &color_shaders[i]);
+            canvas.shade_rect(&rect, &Shaders::from_color(color));
+
+            color.a += delta.a;
+            color.r += delta.r;
+            color.g += delta.g;
+            color.b += delta.b;
+        }
     }
 
-    // Save canvas to a file
-    canvas.write(&Path::new("out.ppm"));
+    canvas.write(&Path::new(&pathstr));
+}
+
+fn draw_blend_ramp(bg: &Color, pathstr: &str) {
+    let mut canvas = Canvas::new(Bitmap::new(200, 200));
+    canvas.clear(&bg);
+
+    let mut rect = Rect::make_xywh(-25.0, -25.0, 70.0, 70.0); 
+
+    let delta = 8.0;
+    let mut i = 0;
+    while i < 200 {
+        let j = i as f32;
+
+        let r = j / 200.0;
+        let g = (j / 40.0).cos().abs();
+        let b = (j / 50.0).sin().abs();
+
+        let color = Color::make_argb(0.3, r, g, b);
+
+        canvas.shade_rect(&rect, &Shaders::from_color(color));
+
+        rect.offset(delta, delta);
+
+        i += delta as i32;
+    }
+
+    canvas.write(&Path::new(&pathstr));
+}
+
+fn main() {
+    draw_solid_ramp("results/solid_ramp.ppm");
+    draw_blend_ramp(&Color::black(), "results/blend_black.ppm");
+    draw_blend_ramp(&Color::white(), "results/blend_white.ppm");
 }
