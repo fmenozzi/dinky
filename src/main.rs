@@ -16,8 +16,6 @@ use std::path::Path;
 fn main() {
     let mut canvas = Canvas::new(Bitmap::new(500, 256));
 
-    let white  = Color::make_argb(1.0, 1.0, 1.0, 1.0);
-
     let red    = Color::make_argb(1.0, 1.0, 0.0, 0.0);
     let green  = Color::make_argb(0.5, 0.0, 1.0, 0.0);
     let blue   = Color::make_argb(0.5, 0.0, 0.0, 1.0);
@@ -29,7 +27,7 @@ fn main() {
     let yellow_shader = Shaders::from_color(yellow);
 
     // White canvas
-    canvas.clear(&white);
+    canvas.clear(&Color::white());
 
     // Draw some rectangles
     canvas.shade_rect(&Rect::make_xywh(50.0, 50.0, 100.0, 50.0), &red_shader);

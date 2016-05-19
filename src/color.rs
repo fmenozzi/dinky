@@ -44,4 +44,13 @@ impl Color {
 
         Pixel::pack_argb(a,r,g,b)
     }
+
+    pub fn white()   -> Color {Color::make_rgb(1.0, 1.0, 1.0)}
+    pub fn black()   -> Color {Color::make_rgb(0.0, 0.0, 0.0)}
+    pub fn red()     -> Color {Color::make_rgb(1.0, 0.0, 0.0)}
+    pub fn green()   -> Color {Color::make_rgb(0.0, 1.0, 0.0)}
+    pub fn blue()    -> Color {Color::make_rgb(0.0, 0.0, 1.0)}
+    pub fn yellow()  -> Color {Color::make_rgb(1.0, 1.0, 0.0)}
+    pub fn magenta() -> Color {Color::make_rgb(1.0, 0.0, 1.0)}
+    pub fn cyan()    -> Color {Color::make_rgb(0.0, 1.0, 1.0)}
 }
