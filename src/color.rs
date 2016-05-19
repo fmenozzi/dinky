@@ -19,12 +19,7 @@ impl Color {
     }
 
     pub fn make_rgb(r: f32, g: f32, b: f32) -> Color {
-        Color {
-            a: 1.0,
-            r: r,
-            g: g,
-            b: b,
-        }
+        Color::make_argb(1.0, r, g, b)
     }
 
     pub fn pin_to_unit(&self) -> Color {

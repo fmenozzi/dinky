@@ -13,7 +13,7 @@ impl Rect {
     }
     pub fn make_xywh(x: f32, y: f32, w: f32, h: f32) -> Rect {
         let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
-        rect.set_xywh(x, y, w, h);
+        rect.set_xywh(x,y,w,h);
         rect
     }
     pub fn make_wh(w: f32, h: f32) -> Rect {

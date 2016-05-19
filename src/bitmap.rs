@@ -20,17 +20,11 @@ impl Bitmap {
     }
 
     pub fn set(&mut self, x: usize, y: usize, p: &Pixel) {
-        let i = x + y*self.width;
-
-        self.pixels[i].a = p.a;
-        self.pixels[i].r = p.r;
-        self.pixels[i].g = p.g;
-        self.pixels[i].b = p.b;
+        self.pixels[x + y*self.width] = *p;
     }
 
     pub fn get(&self, x: usize, y: usize) -> Pixel {
-        let i = x + y*self.width;
-        self.pixels[i]
+        self.pixels[x + y*self.width]
     }
 
     pub fn write(&self, path: &Path) {

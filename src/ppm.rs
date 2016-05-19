@@ -16,16 +16,18 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
+            // TODO: Use Color constants
             colors: vec![Color{a: 1.0, r: 1.0, g: 1.0, b: 1.0}; width*height],
         }
     }
 
     pub fn write(&self, path: &Path) {
         // Fill up color buffer
+        let (w, h) = (self.width, self.height);
         let header = format!("P3\n");
-        let dims   = format!("{} {} {}\n", self.width, self.height, 255);
+        let dims   = format!("{} {} {}\n", w, h, 255);
         let mut bufstr = header + &dims;
-        for i in 0..(self.width*self.height) {
+        for i in 0..w*h {
             let r = (self.colors[i].r * 255.0) as i32;
             let g = (self.colors[i].g * 255.0) as i32;
             let b = (self.colors[i].b * 255.0) as i32;
@@ -41,11 +43,6 @@ impl PPMImage {
     }
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
-        let i = x + y*self.width;
-
-        self.colors[i].a = c.a;
-        self.colors[i].r = c.r;
-        self.colors[i].g = c.g;
-        self.colors[i].b = c.b;
+        self.colors[x + y*self.width] = *c;
     }
 }

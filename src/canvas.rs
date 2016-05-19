@@ -4,8 +4,7 @@ use pixel::Pixel;
 use rect::Rect;
 use triangle::Triangle;
 use shader::Shader;
-
-use util;
+use util::blend_row;
 
 use cgmath::Point2;
 
@@ -67,7 +66,7 @@ impl Canvas {
     pub fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &S) {
         let (w,h) = (self.bitmap.width, self.bitmap.height);
 
-        // Clip triangle with canvas
+        // Clip bounding box with canvas
         let bounds = tri.bounds();
         let mut roi = Rect::make_wh(w as f32, h as f32).round();
         if !roi.intersect(&bounds) {
@@ -131,7 +130,7 @@ impl Canvas {
         let ymax = ymax_i32 as usize;
 
         // Rasterize
-        for y in ymin.. ymax {
+        for y in ymin..ymax {
             let mut cx1 = cy1;
             let mut cx2 = cy2;
             let mut cx3 = cy3;
@@ -140,9 +139,9 @@ impl Canvas {
             let shaded_row = shader.shade_row(xmin, y, count);
             let mut dst_row: Vec<Pixel> = Vec::with_capacity(count);
             for i in 0..count {
-                dst_row.push(self.bitmap.get(xmin+i, y));
+                dst_row.push(self.bitmap.get(xmin + i, y));
             }
-            let blended_row = util::blend_row(&shaded_row, &dst_row);
+            let blended_row = blend_row(&shaded_row, &dst_row);
 
             for x in xmin..xmax {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
