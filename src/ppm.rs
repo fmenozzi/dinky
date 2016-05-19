@@ -1,8 +1,9 @@
-use color::Color as Color;
+use color::Color;
 
 use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
+use std::io::BufReader;
 
 pub struct PPMImage {
     width:  usize,
@@ -16,8 +17,44 @@ impl PPMImage {
         PPMImage {
             width:  width,
             height: height,
-            // TODO: Use Color constants
-            colors: vec![Color{a: 1.0, r: 1.0, g: 1.0, b: 1.0}; width*height],
+            colors: vec![Color::white(); width*height],
+        }
+    }
+
+    pub fn read(&mut self, path: &Path) {
+        // Read file lines
+        let f = File::open(&path).unwrap();
+        let file = BufReader::new(&f);
+        let mut lines: Vec<String> = Vec::new();
+        for line in file.lines() {
+            lines.push(line.unwrap());
+        }
+
+        // Extract image dimensions
+        let dims: Vec<&str> = (&lines[1]).split(" ").collect();
+        let width  = dims[0].parse::<usize>().unwrap();
+        let height = dims[1].parse::<usize>().unwrap();
+
+        // Adjust image dimensions
+        self.width  = width;
+        self.height = height;
+        self.colors = vec![Color::white(); width*height];
+
+        // Read remaining lines into image buffer
+        let lines = &lines[2..];
+        let mut i = 0;
+        for line in lines {
+            let components: Vec<&str> = (&line).split(" ").collect();
+
+            let r = components[0].parse::<usize>().unwrap() as f32 / 255.0;
+            let g = components[1].parse::<usize>().unwrap() as f32 / 255.0;
+            let b = components[2].parse::<usize>().unwrap() as f32 / 255.0;
+
+            let color = Color::make_rgb(r, g, b);
+
+            self.colors[i] = color;
+
+            i += 1;
         }
     }
 
