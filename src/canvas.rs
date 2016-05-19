@@ -102,14 +102,14 @@ impl Canvas {
         let fdy31 = dy31 << 4;
 
         // Apply clipping
-        let mut xmin = (min(x1, min(x2, x3)) + 0xf) >> 4;
-        let mut xmax = (max(x1, max(x2, x3)) + 0xf) >> 4;
-        let mut ymin = (min(y1, min(y2, y3)) + 0xf) >> 4;
-        let mut ymax = (max(y1, max(y2, y3)) + 0xf) >> 4;
-        xmin = max(xmin, roi.left   as i32);
-        xmax = min(xmax, roi.right  as i32);
-        ymin = max(ymin, roi.top    as i32);
-        ymax = min(ymax, roi.bottom as i32);
+        let mut xmin_i32 = (min(x1, min(x2, x3)) + 0xf) >> 4;
+        let mut xmax_i32 = (max(x1, max(x2, x3)) + 0xf) >> 4;
+        let mut ymin_i32 = (min(y1, min(y2, y3)) + 0xf) >> 4;
+        let mut ymax_i32 = (max(y1, max(y2, y3)) + 0xf) >> 4;
+        xmin_i32 = max(xmin_i32, roi.left   as i32);
+        xmax_i32 = min(xmax_i32, roi.right  as i32);
+        ymin_i32 = max(ymin_i32, roi.top    as i32);
+        ymax_i32 = min(ymax_i32, roi.bottom as i32);
 
         // Half-edge constants
         let mut c1 = dy12*x1 - dx12*y1;
@@ -121,27 +121,32 @@ impl Canvas {
         if dy23 > 0 || (dy23 == 0 && dx23 < 0) {c2 -= 1;}
         if dy31 > 0 || (dy31 == 0 && dx31 < 0) {c3 -= 1;}
 
-        let mut cy1 = c1 + dx12*(ymin << 4) - dy12*(xmin << 4);
-        let mut cy2 = c2 + dx23*(ymin << 4) - dy23*(xmin << 4);
-        let mut cy3 = c3 + dx31*(ymin << 4) - dy31*(xmin << 4);
+        let mut cy1 = c1 + dx12*(ymin_i32 << 4) - dy12*(xmin_i32 << 4);
+        let mut cy2 = c2 + dx23*(ymin_i32 << 4) - dy23*(xmin_i32 << 4);
+        let mut cy3 = c3 + dx31*(ymin_i32 << 4) - dy31*(xmin_i32 << 4);
+
+        let xmin = xmin_i32 as usize;
+        let xmax = xmax_i32 as usize;
+        let ymin = ymin_i32 as usize;
+        let ymax = ymax_i32 as usize;
 
         // Rasterize
-        for y in ymin as usize .. ymax as usize {
+        for y in ymin.. ymax {
             let mut cx1 = cy1;
             let mut cx2 = cy2;
             let mut cx3 = cy3;
 
-            let count = (xmax - xmin) as usize;
-            let shaded_row = shader.shade_row(xmin as usize, y as usize, count);
+            let count = xmax - xmin;
+            let shaded_row = shader.shade_row(xmin, y, count);
             let mut dst_row: Vec<Pixel> = Vec::with_capacity(count);
             for i in 0..count {
-                dst_row.push(self.bitmap.get(i + xmin as usize, y));
+                dst_row.push(self.bitmap.get(xmin+i, y));
             }
             let blended_row = util::blend_row(&shaded_row, &dst_row);
 
-            for x in xmin as usize .. xmax as usize {
+            for x in xmin..xmax {
                 if cx1 < 0 && cx2 < 0 && cx3 < 0 {
-                    self.bitmap.set(x, y, &blended_row[x-xmin as usize]);
+                    self.bitmap.set(x, y, &blended_row[x-xmin]);
                 }
 
                 cx1 -= fdy12;
