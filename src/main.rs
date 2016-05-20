@@ -32,7 +32,7 @@ fn draw_solid_ramp(pathstr: &str) {
         for x in 0..256 {
             let rect = Rect::make_xywh((x*ramp_w) as f32, (y*ramp_h) as f32, ramp_w as f32, ramp_h as f32);
 
-            canvas.shade_rect(&rect, &Shaders::from_color(color));
+            canvas.shade_rect(&rect, &mut Shaders::from_color(color));
 
             color.a += delta.a;
             color.r += delta.r;
@@ -61,7 +61,7 @@ fn draw_blend_ramp(bg: &Color, pathstr: &str) {
 
         let color = Color::make_argb(0.3, r, g, b);
 
-        canvas.shade_rect(&rect, &Shaders::from_color(color));
+        canvas.shade_rect(&rect, &mut Shaders::from_color(color));
 
         rect.offset(delta, delta);
 
@@ -74,10 +74,9 @@ fn draw_blend_ramp(bg: &Color, pathstr: &str) {
 fn draw_spocks_quad(pathstr: &str) {
     let mut canvas = Canvas::new(Bitmap::new(200, 200));
 
-    let rect = Rect::make_xywh(50.0, 50.0, 100.0, 100.0);
+    let rect = Rect::make_xywh(70.0, 70.0, 100.0, 100.0);
     let mut bitmap = Bitmap::new(100, 100);
     bitmap.read(&Path::new("results/solid_ramp.ppm"));
-    bitmap.write(&Path::new("results/test_bitmap_load.ppm"));
 
     canvas.fill_bitmap_rect(bitmap, &rect);
 

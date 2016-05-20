@@ -102,23 +102,11 @@ impl Shaders {
     }
 
     pub fn from_bitmap_mat(bitmap: Bitmap, local: [f32; 6]) -> BitmapShader {
-        let mut mat = Matrix3::new(
+        let mat = Matrix3::new(
             local[0], local[1], local[2],
             local[3], local[4], local[5],
                  0.0,      0.0,      1.0
         );
-        mat.transpose_self();
         BitmapShader::new(bitmap, mat)
-    }
-    pub fn from_bitmap_rect(bitmap: Bitmap, dst: Rect) -> BitmapShader {
-        let (bw, bh) = (bitmap.width as f32, bitmap.height as f32);
-        let (rw, rh) = (dst.width(), dst.height());
-
-        let mat = [
-            rw/bw,  0.0,    dst.left(),
-            0.0,    rh/bh,  dst.top(),
-        ];
-
-        Shaders::from_bitmap_mat(bitmap, mat)
     }
 }

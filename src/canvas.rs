@@ -48,12 +48,12 @@ impl Canvas {
             r2r[1][0], r2r[1][1], r2r[1][2],
         ];
 
-        let shader = Shaders::from_bitmap_mat(src, r2r_floats);
+        let mut shader = Shaders::from_bitmap_mat(src, r2r_floats);
 
-        self.shade_rect(&roi, &shader);
+        self.shade_rect(&roi, &mut shader);
     }
 
-    pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &S) {
+    pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &mut S) {
         if !rect.empty() {
             let (w, h) = (self.bitmap.width, self.bitmap.height);
 
@@ -83,7 +83,7 @@ impl Canvas {
 
     // Courtesy of http://forum.devmaster.net/t/advanced-rasterization/6145
     // TODO: Currently requires CW vertex ordering
-    pub fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &S) {
+    pub fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &mut S) {
         let (w,h) = (self.bitmap.width, self.bitmap.height);
 
         // Clip bounding box with canvas
@@ -148,6 +148,11 @@ impl Canvas {
         let xmax = xmax_i32 as usize;
         let ymin = ymin_i32 as usize;
         let ymax = ymax_i32 as usize;
+
+
+
+        shader.set_context([1.0, 0.0, 0.0, 0.0, 1.0, 0.0]);
+
 
         // Rasterize
         for y in ymin..ymax {
