@@ -1,15 +1,15 @@
-use cgmath::Point2;
+use cgmath::Point3;
 use rect::Rect;
 
 pub struct Triangle {
-    pub a: Point2<f32>,
-    pub b: Point2<f32>,
-    pub c: Point2<f32>,
+    pub a: Point3<f32>,
+    pub b: Point3<f32>,
+    pub c: Point3<f32>,
 }
 
 
 impl Triangle {
-    pub fn new(a: Point2<f32>, b: Point2<f32>, c: Point2<f32>) -> Triangle {
+    pub fn new(a: Point3<f32>, b: Point3<f32>, c: Point3<f32>) -> Triangle {
         Triangle {
             a: a,
             b: b,

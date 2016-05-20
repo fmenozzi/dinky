@@ -27,6 +27,22 @@ impl Bitmap {
         self.pixels[x + y*self.width]
     }
 
+    pub fn read(&mut self, path: &Path) {
+        let mut image = PPMImage::new(self.width, self.height);
+
+        image.read(&path);
+
+        self.width  = image.width;
+        self.height = image.height;
+        self.pixels = vec![Pixel::pack_argb(255, 255, 255, 255); self.width*self.height];
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                self.set(x, y, &image.get(x, y).to_pixel());
+            }
+        }
+    }
+
     pub fn write(&self, path: &Path) {
         let mut image = PPMImage::new(self.width, self.height);
 

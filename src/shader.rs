@@ -4,7 +4,7 @@ use rect::Rect;
 use bitmap::Bitmap;
 use util::clamp;
 
-use cgmath::Point2;
+use cgmath::Point3;
 use cgmath::Matrix3;
 use cgmath::prelude::{SquareMatrix, EuclideanSpace};
 
@@ -56,11 +56,11 @@ impl BitmapShader {
 }
 impl Shader for BitmapShader {
     fn shade_row(&self, x: usize, y: usize, count: usize) -> Vec<Pixel> {
-        let start = Point2::new(x as f32 + 0.5, y as f32 + 0.5);
+        let start = Point3::new(x as f32 + 0.5, y as f32 + 0.5, 1.0);
         let mut lookup = self.xform * start.to_vec();
 
-        let w_1 = self.src.width() - 1.0;
-        let h_1 = self.src.height() - 1.0;
+        let w_1 = self.src.width  as f32 - 1.0;
+        let h_1 = self.src.height as f32 - 1.0;
 
         let a = self.xform[0][0];
         let d = self.xform[1][0];

@@ -6,7 +6,7 @@ use triangle::Triangle;
 use shader::{Shader, Shaders};
 use util::{blend_row, map_rect_to_rect_mat};
 
-use cgmath::Point2;
+use cgmath::Point3;
 
 use std::path::Path;
 use std::cmp::{min, max};
@@ -66,15 +66,15 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 // CW
-                a: Point2::new(roi.left,  roi.top),
-                b: Point2::new(roi.right, roi.top),
-                c: Point2::new(roi.left, roi.bottom),
+                a: Point3::new(roi.left,  roi.top,   1.0),
+                b: Point3::new(roi.right, roi.top,   1.0),
+                c: Point3::new(roi.left, roi.bottom, 1.0),
             };
             let tri2 = Triangle {
                 // CW
-                a: Point2::new(roi.right, roi.top),
-                b: Point2::new(roi.right, roi.bottom),
-                c: Point2::new(roi.left,  roi.bottom),
+                a: Point3::new(roi.right, roi.top,    1.0),
+                b: Point3::new(roi.right, roi.bottom, 1.0),
+                c: Point3::new(roi.left,  roi.bottom, 1.0),
             };
             self.shade_tri(&tri1, shader);
             self.shade_tri(&tri2, shader);

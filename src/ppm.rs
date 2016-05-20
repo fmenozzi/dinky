@@ -7,9 +7,9 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 pub struct PPMImage {
-    width:  usize,
-    height: usize,
-    colors: Vec<Color>,
+    pub width:  usize,
+    pub height: usize,
+        colors: Vec<Color>,
 }
 
 impl PPMImage {
@@ -78,5 +78,9 @@ impl PPMImage {
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
         self.colors[x + y*self.width] = *c;
+    }
+
+    pub fn get(&self, x: usize, y: usize) -> Color {
+        self.colors[x + y*self.width]
     }
 }
