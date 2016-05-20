@@ -73,19 +73,22 @@ fn draw_blend_ramp(bg: &Color, pathstr: &str) {
 
 fn draw_spocks_quad(pathstr: &str) {
     let mut canvas = Canvas::new(Bitmap::new(200, 200));
+    canvas.clear(&Color::black());
 
     let rect   = Rect::make_xywh(50.0, 50.0, 100.0, 100.0);
     let bitmap = Bitmap::new(100, 100);
 
-    canvas.fill_bitmap_rect(&bitmap, &rect);
+    canvas.fill_bitmap_rect(bitmap, &rect);
 
     canvas.write(&Path::new(&pathstr));
 }
 
 fn main() {
+    /*
     draw_solid_ramp("results/solid_ramp.ppm");
     draw_blend_ramp(&Color::black(), "results/blend_black.ppm");
     draw_blend_ramp(&Color::white(), "results/blend_white.ppm");
+    */
 
     draw_spocks_quad("results/spocks_quad.ppm");
 }
