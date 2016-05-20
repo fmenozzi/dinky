@@ -26,6 +26,7 @@ impl ColorShader {
     }
 }
 impl Shader for ColorShader {
+    #[allow(unused_variables)]
     fn shade_row(&self, x: usize, y: usize, count: usize) -> Vec<Pixel> {
         let mut res = Vec::with_capacity(count);
         for _ in 0..count {
@@ -34,6 +35,7 @@ impl Shader for ColorShader {
         res
     }
 
+    #[allow(unused_variables)]
     fn set_context(&mut self, ctm: [f32; 6]) -> bool {
         true
     }
@@ -67,7 +69,7 @@ impl Shader for BitmapShader {
 
         let mut res = Vec::with_capacity(count);
 
-        for i in 0..count {
+        for _ in 0..count {
             let lookup_x = clamp(0.0, lookup.x, w_1) as usize;
             let lookup_y = clamp(0.0, lookup.y, h_1) as usize;
 
