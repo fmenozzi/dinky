@@ -56,7 +56,15 @@ impl PPMImage {
         for i in 0..w*h {
             let pixel = self.colors[i].to_pixel();
 
-            let colorstr = format!("{} {} {}\n", pixel.r, pixel.g, pixel.b);
+            // Undo premul
+            let (a, mut r, mut g, mut b) = (pixel.a, pixel.r, pixel.g, pixel.b);
+            if a != 0 && a != 255 {
+                r = ((r as i32 * 255 + a as i32/2) / a as i32) as u8;
+                g = ((g as i32 * 255 + a as i32/2) / a as i32) as u8;
+                b = ((b as i32 * 255 + a as i32/2) / a as i32) as u8;
+            }
+
+            let colorstr = format!("{} {} {}\n", r, g, b);
 
             bufstr = bufstr + &colorstr;
         }
