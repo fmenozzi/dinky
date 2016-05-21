@@ -107,10 +107,10 @@ fn draw_spocks_zoom(pathstr: &str) {
 }
 
 fn main() {
-    draw_solid_ramp("results/solid_ramp.ppm");
-    draw_blend_ramp(&Color::black(), "results/blend_black.ppm");
-    draw_blend_ramp(&Color::white(), "results/blend_white.ppm");
+    draw_solid_ramp("results/ppm/solid_ramp.ppm");
+    draw_blend_ramp(&Color::black(), "results/ppm/blend_black.ppm");
+    draw_blend_ramp(&Color::white(), "results/ppm/blend_white.ppm");
 
-    draw_spocks_quad("results/spocks_quad.ppm");
-    draw_spocks_zoom("results/spocks_zoom.ppm");
+    draw_spocks_quad("results/ppm/spocks_quad.ppm");
+    draw_spocks_zoom("results/ppm/spocks_zoom.ppm");
 }
