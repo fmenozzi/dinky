@@ -12,11 +12,11 @@ pub struct Bitmap {
 
 impl Bitmap {
     pub fn new(width: usize, height: usize) -> Bitmap {
-        // Blank white bitmap
+        // Transparent bitmap
         Bitmap {
             width:  width,
             height: height,
-            pixels: vec![Pixel::pack_argb(255, 255, 255, 255); width*height]
+            pixels: vec![Pixel::pack_argb(0, 0, 0, 0); width*height]
         }
     }
 
