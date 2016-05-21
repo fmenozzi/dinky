@@ -52,6 +52,11 @@ impl Canvas {
         self.shade_rect(&roi, &mut shader);
     }
 
+    pub fn fill_rect(&mut self, rect: &Rect, color: &Color) {
+        let mut color_shader = Shaders::from_color(*color);
+        self.shade_rect(&rect, &mut color_shader);
+    }
+
     pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &mut S) {
         if !rect.empty() {
             let (w, h) = (self.bitmap.width, self.bitmap.height);
@@ -148,10 +153,7 @@ impl Canvas {
         let ymin = ymin_i32 as usize;
         let ymax = ymax_i32 as usize;
 
-
-
         shader.set_context([1.0, 0.0, 0.0, 0.0, 1.0, 0.0]);
-
 
         // Rasterize
         for y in ymin..ymax {
@@ -180,6 +182,29 @@ impl Canvas {
             cy1 += fdx12;
             cy2 += fdx23;
             cy3 += fdx31;
+        }
+    }
+
+    pub fn fill_convex_polygon(&mut self, points: &[Point], color: &Color) {
+        let mut color_shader = Shaders::from_color(*color);
+        self.shade_convex_polygon(points, &mut color_shader);
+    }
+
+    pub fn shade_convex_polygon<S: Shader>(&mut self, points: &[Point], shader: &mut S) {
+        // Reject lines and points
+        if points.len() <= 2 {
+            return
+        }
+
+        // Triangulate convex polygon
+        let mut triangles: Vec<Triangle> = Vec::with_capacity(points.len() - 2);
+        for i in 1..points.len()-1 {
+            triangles.push(Triangle::new(points[0], points[i], points[i+1]));
+        }
+
+        // Shade each triangle
+        for triangle in triangles {
+            self.shade_tri(&triangle, shader);
         }
     }
 
