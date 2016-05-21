@@ -1,3 +1,5 @@
+all: results
+
 build:
 	@cargo build
 
