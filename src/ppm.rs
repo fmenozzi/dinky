@@ -4,7 +4,6 @@ use pixel::Pixel;
 use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::BufReader;
 
 pub struct PPMImage {
     pub width:  usize,
@@ -26,12 +25,11 @@ impl PPMImage {
         // Read file nums
         let mut file = File::open(path).unwrap();
         let mut as_string = String::new();
-        file.read_to_string(&mut as_string);
+        file.read_to_string(&mut as_string).unwrap();
         let nums: Vec<usize> = as_string.split_whitespace().filter_map(|s| s.trim().parse::<usize>().ok()).collect();
 
         // Extract image dimensions
         let (width, height) = (nums[0], nums[1]);
-        println!("w,h: {},{}", width, height);
 
         // Adjust image dimensions
         self.width  = width;

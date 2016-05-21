@@ -71,13 +71,37 @@ fn draw_blend_ramp(bg: &Color, pathstr: &str) {
 }
 
 fn draw_spocks_quad(pathstr: &str) {
-    let mut canvas = Canvas::new(Bitmap::new(200, 200));
+    let mut canvas = Canvas::new(Bitmap::new(300, 300));
 
-    let rect = Rect::make_xywh(70.0, 70.0, 100.0, 100.0);
+    let n = 300.0;
+
     let mut bitmap = Bitmap::new(100, 100);
     bitmap.read(&Path::new("spock.ppm"));
 
-    canvas.fill_bitmap_rect(&bitmap, &rect);
+    for y in 0..2 {
+        for x in 0..2 {
+            let (xf, yf) = (x as f32, y as f32);
+            let rect = Rect::make_xywh(xf*n - n/2.0, yf*n - n/2.0, n, n);
+            canvas.fill_bitmap_rect(&bitmap, &rect);
+        }
+    }
+
+    canvas.write(&Path::new(&pathstr));
+}
+
+fn draw_spocks_zoom(pathstr: &str) {
+    let mut canvas = Canvas::new(Bitmap::new(300, 300));
+
+    let n = 300.0;
+
+    let mut bitmap = Bitmap::new(100, 100);
+    bitmap.read(&Path::new("spock.ppm"));
+
+    for i in 0..9 {
+        let f = i as f32;
+        let r = Rect::make_ltrb(f*10.0, f*10.0, n - f*10.0, n - f*10.0);
+        canvas.fill_bitmap_rect(&bitmap, &r);
+    }
 
     canvas.write(&Path::new(&pathstr));
 }
@@ -88,4 +112,5 @@ fn main() {
     draw_blend_ramp(&Color::white(), "results/blend_white.ppm");
 
     draw_spocks_quad("results/spocks_quad.ppm");
+    draw_spocks_zoom("results/spocks_zoom.ppm");
 }
