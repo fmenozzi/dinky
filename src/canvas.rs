@@ -2,11 +2,10 @@ use bitmap::Bitmap;
 use color::Color;
 use pixel::Pixel;
 use rect::Rect;
+use point::Point;
 use triangle::Triangle;
 use shader::{Shader, Shaders};
 use util::{blend_row, map_rect_to_rect_mat};
-
-use cgmath::Point3;
 
 use std::path::Path;
 use std::cmp::{min, max};
@@ -44,8 +43,8 @@ impl Canvas {
 
         let r2r = map_rect_to_rect_mat(&srcrect, &dst);
         let r2r_floats = [
-            r2r[0][0], r2r[0][1], r2r[0][2],
-            r2r[1][0], r2r[1][1], r2r[1][2],
+            r2r.at(0), r2r.at(1), r2r.at(2),
+            r2r.at(3), r2r.at(4), r2r.at(5),
         ];
 
         let mut shader = Shaders::from_bitmap_mat(src, r2r_floats);
@@ -66,15 +65,15 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 // CW
-                a: Point3::new(roi.left,  roi.top,   1.0),
-                b: Point3::new(roi.right, roi.top,   1.0),
-                c: Point3::new(roi.left, roi.bottom, 1.0),
+                a: Point::new(roi.left,  roi.top),
+                b: Point::new(roi.right, roi.top),
+                c: Point::new(roi.left, roi.bottom),
             };
             let tri2 = Triangle {
                 // CW
-                a: Point3::new(roi.right, roi.top,    1.0),
-                b: Point3::new(roi.right, roi.bottom, 1.0),
-                c: Point3::new(roi.left,  roi.bottom, 1.0),
+                a: Point::new(roi.right, roi.top),
+                b: Point::new(roi.right, roi.bottom),
+                c: Point::new(roi.left,  roi.bottom),
             };
             self.shade_tri(&tri1, shader);
             self.shade_tri(&tri2, shader);

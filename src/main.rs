@@ -1,5 +1,4 @@
 extern crate dinky;
-extern crate cgmath;
 
 use dinky::color::Color;
 use dinky::rect::Rect;
@@ -84,11 +83,9 @@ fn draw_spocks_quad(pathstr: &str) {
 }
 
 fn main() {
-    /*
     draw_solid_ramp("results/solid_ramp.ppm");
     draw_blend_ramp(&Color::black(), "results/blend_black.ppm");
     draw_blend_ramp(&Color::white(), "results/blend_white.ppm");
-    */
 
     draw_spocks_quad("results/spocks_quad.ppm");
 }

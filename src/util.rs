@@ -1,8 +1,6 @@
 use pixel::Pixel;
 use rect::Rect;
-
-use cgmath::Matrix3;
-use cgmath::prelude::SquareMatrix;
+use matrix::Matrix;
 
 pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
     let magic: u32 = (1<<16) | (1<<8) | 1;
@@ -24,7 +22,7 @@ pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
 
 // TODO: Use slices instead of vectors for read access
 pub fn blend_row(src: &Vec<Pixel>, dst: &Vec<Pixel>) -> Vec<Pixel> {
-    assert!(src.len() == dst.len(), format!("src and dst rows not the same size ({} vs {})", src.len(), dst.len()));
+    assert!(src.len() == dst.len(), "src and dst rows not the same size");
 
     let mut res: Vec<Pixel> = Vec::with_capacity(src.len());
     for i in 0..src.len() {
@@ -33,7 +31,7 @@ pub fn blend_row(src: &Vec<Pixel>, dst: &Vec<Pixel>) -> Vec<Pixel> {
     res
 }
 
-pub fn map_rect_to_rect_mat(src: &Rect, dst: &Rect) -> Matrix3<f32> {
+pub fn map_rect_to_rect_mat(src: &Rect, dst: &Rect) -> Matrix {
     let mut res = [0f32; 6];
 
     let t1x = -src.left();
@@ -53,14 +51,7 @@ pub fn map_rect_to_rect_mat(src: &Rect, dst: &Rect) -> Matrix3<f32> {
     res[4] = sy;
     res[5] = t1y*sy + t2y;
 
-    let mut mat = Matrix3::new(
-        res[0], res[1], res[2],
-        res[3], res[4], res[5],
-           0.0,    0.0,    1.0
-    );
-    mat.transpose_self();
-
-    mat
+    Matrix::new(res)
 }
 
 pub fn clamp(min: f32, value: f32, max: f32) -> f32 {

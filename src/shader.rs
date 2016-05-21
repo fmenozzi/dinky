@@ -1,12 +1,9 @@
 use pixel::Pixel;
 use color::Color;
-use rect::Rect;
+use point::Point;
+use matrix::Matrix;
 use bitmap::Bitmap;
 use util::clamp;
-
-use cgmath::Point3;
-use cgmath::Matrix3;
-use cgmath::prelude::{SquareMatrix, EuclideanSpace};
 
 // Functions shared by all shaders
 pub trait Shader {
@@ -44,28 +41,28 @@ impl Shader for ColorShader {
 // Bitmap shader
 pub struct BitmapShader {
     src:   Bitmap,
-    local: Matrix3<f32>,
-    xform: Matrix3<f32>,
+    local: Matrix,
+    xform: Matrix,
 }
 impl BitmapShader {
-    pub fn new(src: Bitmap, local: Matrix3<f32>) -> BitmapShader {
+    pub fn new(src: Bitmap, local: Matrix) -> BitmapShader {
         BitmapShader {
-            src: src,
+            src:   src,
             local: local,
-            xform: Matrix3::identity(),
+            xform: Matrix::identity(),
         }
     }
 }
 impl Shader for BitmapShader {
     fn shade_row(&self, x: usize, y: usize, count: usize) -> Vec<Pixel> {
-        let start = Point3::new(x as f32 + 0.5, y as f32 + 0.5, 1.0);
-        let mut lookup = self.xform * start.to_vec();
+        let start = Point::new(x as f32 + 0.5, y as f32 + 0.5);
+        let mut lookup = self.xform.apply(&start);
 
         let w_1 = self.src.width  as f32 - 1.0;
         let h_1 = self.src.height as f32 - 1.0;
 
-        let a = self.xform[0][0];
-        let d = self.xform[1][0];
+        let a = self.xform.at(0);
+        let d = self.xform.at(3);
 
         let mut res = Vec::with_capacity(count);
 
@@ -83,13 +80,8 @@ impl Shader for BitmapShader {
     }
 
     fn set_context(&mut self, ctm: [f32; 6]) -> bool {
-        let mut ctm = Matrix3::new(
-            ctm[0], ctm[1], ctm[2],
-            ctm[3], ctm[4], ctm[5],
-               0.0,    0.0,    1.0
-        );
-        ctm.transpose_self(); // cgmath uses column-major order
-        self.xform = (ctm * self.local).invert().unwrap();
+        let ctm = Matrix::new(ctm);
+        self.xform = (ctm.mul(&self.local)).inv();
         true
     }
 }
@@ -102,11 +94,6 @@ impl Shaders {
     }
 
     pub fn from_bitmap_mat(bitmap: Bitmap, local: [f32; 6]) -> BitmapShader {
-        let mat = Matrix3::new(
-            local[0], local[1], local[2],
-            local[3], local[4], local[5],
-                 0.0,      0.0,      1.0
-        );
-        BitmapShader::new(bitmap, mat)
+        BitmapShader::new(bitmap, Matrix::new(local))
     }
 }

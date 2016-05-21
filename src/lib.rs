@@ -1,5 +1,3 @@
-extern crate cgmath;
-
 pub mod color;
 pub mod ppm;
 pub mod pixel;
@@ -8,4 +6,6 @@ pub mod triangle;
 pub mod bitmap;
 pub mod canvas;
 pub mod shader;
+pub mod point;
+pub mod matrix;
 pub mod util;
