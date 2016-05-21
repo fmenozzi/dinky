@@ -45,9 +45,9 @@ pub struct BitmapShader {
     xform: Matrix,
 }
 impl BitmapShader {
-    pub fn new(src: Bitmap, local: Matrix) -> BitmapShader {
+    pub fn new(src: &Bitmap, local: Matrix) -> BitmapShader {
         BitmapShader {
-            src:   src,
+            src:   src.clone(),
             local: local,
             xform: Matrix::identity(),
         }
@@ -93,7 +93,7 @@ impl Shaders {
         ColorShader::new(color)
     }
 
-    pub fn from_bitmap_mat(bitmap: Bitmap, local: [f32; 6]) -> BitmapShader {
+    pub fn from_bitmap_mat(bitmap: &Bitmap, local: [f32; 6]) -> BitmapShader {
         BitmapShader::new(bitmap, Matrix::new(local))
     }
 }

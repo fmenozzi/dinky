@@ -3,6 +3,7 @@ use ppm::PPMImage;
 
 use std::path::Path;
 
+#[derive(Clone)]
 pub struct Bitmap {
     pub width:  usize,
     pub height: usize,

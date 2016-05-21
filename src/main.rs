@@ -75,9 +75,9 @@ fn draw_spocks_quad(pathstr: &str) {
 
     let rect = Rect::make_xywh(70.0, 70.0, 100.0, 100.0);
     let mut bitmap = Bitmap::new(100, 100);
-    bitmap.read(&Path::new("results/solid_ramp.ppm"));
+    bitmap.read(&Path::new("spock.ppm"));
 
-    canvas.fill_bitmap_rect(bitmap, &rect);
+    canvas.fill_bitmap_rect(&bitmap, &rect);
 
     canvas.write(&Path::new(&pathstr));
 }

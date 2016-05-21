@@ -32,7 +32,7 @@ impl Canvas {
         }
     }
 
-    pub fn fill_bitmap_rect(&mut self, src: Bitmap, dst: &Rect) {
+    pub fn fill_bitmap_rect(&mut self, src: &Bitmap, dst: &Rect) {
         let (w, h) = (self.bitmap.width, self.bitmap.height);
         let mut roi = Rect::make_wh(w as f32, h as f32);
         if !roi.intersect(&dst.round()) {
