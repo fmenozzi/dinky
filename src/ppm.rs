@@ -23,37 +23,29 @@ impl PPMImage {
     }
 
     pub fn read(&mut self, path: &Path) {
-        // Read file lines
-        let f = File::open(&path).unwrap();
-        let file = BufReader::new(&f);
-        let mut lines: Vec<String> = Vec::new();
-        for line in file.lines() {
-            lines.push(line.unwrap());
-        }
+        // Read file nums
+        let mut file = File::open(path).unwrap();
+        let mut as_string = String::new();
+        file.read_to_string(&mut as_string);
+        let nums: Vec<usize> = as_string.split_whitespace().filter_map(|s| s.trim().parse::<usize>().ok()).collect();
 
         // Extract image dimensions
-        let dims: Vec<&str> = (&lines[1]).split(" ").collect();
-        let width  = dims[0].parse::<usize>().unwrap();
-        let height = dims[1].parse::<usize>().unwrap();
+        let (width, height) = (nums[0], nums[1]);
+        println!("w,h: {},{}", width, height);
 
         // Adjust image dimensions
         self.width  = width;
         self.height = height;
         self.colors = vec![Color::white(); width*height];
 
-        // Read remaining lines into image buffer
-        let lines = &lines[2..];
-        let mut i = 0;
-        for line in lines {
-            let components: Vec<&str> = (&line).split(" ").collect();
-
-            let r = components[0].parse::<usize>().unwrap() as u8;
-            let g = components[1].parse::<usize>().unwrap() as u8;
-            let b = components[2].parse::<usize>().unwrap() as u8;
+        // Read remaining nums into image buffer
+        let nums = &nums[3..];
+        for i in 0..width*height {
+            let r = nums[3*i + 0] as u8;
+            let g = nums[3*i + 1] as u8;
+            let b = nums[3*i + 2] as u8;
 
             self.colors[i] = Pixel::pack_rgb(r, g, b).to_color();
-
-            i += 1;
         }
     }
 
