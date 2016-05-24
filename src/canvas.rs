@@ -3,6 +3,7 @@ use color::Color;
 use pixel::Pixel;
 use rect::Rect;
 use point::Point;
+use matrix::Matrix;
 use triangle::Triangle;
 use shader::{Shader, Shaders};
 use util::{blend_row, map_rect_to_rect_mat};
@@ -12,12 +13,15 @@ use std::cmp::{min, max};
 
 pub struct Canvas {
     bitmap: Bitmap,
+    ctms:   Vec<Matrix>,
 }
 
 impl Canvas {
     pub fn new(bitmap: Bitmap) -> Canvas {
+        let ctms = vec![Matrix::identity()];
         Canvas {
             bitmap: bitmap,
+            ctms:   ctms,
         }
     }
 
@@ -87,8 +91,17 @@ impl Canvas {
 
     // Courtesy of http://forum.devmaster.net/t/advanced-rasterization/6145
     // TODO: Currently requires CW vertex ordering
-    pub fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &mut S) {
+    fn shade_tri<S: Shader>(&mut self, tri: &Triangle, shader: &mut S) {
         let (w,h) = (self.bitmap.width, self.bitmap.height);
+
+        // Apply CTM
+        let ctm = self.get_ctm();
+        let tri = Triangle {
+            a: ctm.apply(&tri.a),
+            b: ctm.apply(&tri.b),
+            c: ctm.apply(&tri.c),
+        };
+        shader.set_context(ctm.get_floats());
 
         // Clip bounding box with canvas
         let bounds = tri.bounds();
@@ -153,8 +166,6 @@ impl Canvas {
         let ymin = ymin_i32 as usize;
         let ymax = ymax_i32 as usize;
 
-        shader.set_context([1.0, 0.0, 0.0, 0.0, 1.0, 0.0]);
-
         // Rasterize
         for y in ymin..ymax {
             let mut cx1 = cy1;
@@ -206,6 +217,54 @@ impl Canvas {
         for triangle in triangles {
             self.shade_tri(&triangle, shader);
         }
+    }
+
+    fn get_ctm(&mut self) -> Matrix {
+        self.ctms[self.ctms.len()-1]
+    }
+
+    pub fn save(&mut self) {
+        let ctm = self.get_ctm().clone();
+        self.ctms.push(ctm);
+    }
+
+    pub fn restore(&mut self) {
+        self.ctms.pop().unwrap();
+    }
+
+    pub fn concat(&mut self, mat: [f32; 6]) {
+        let ctm = self.get_ctm().clone();
+        let len = self.ctms.len();
+        self.ctms[len-1] = ctm.mul(&Matrix::new(mat));
+    }
+
+    pub fn scale(&mut self, sx: f32, sy: f32) {
+        self.concat([
+             sx, 0.0, 0.0,
+            0.0,  sy, 0.0,
+        ]);
+    }
+
+    pub fn translate(&mut self, tx: f32, ty: f32) {
+        self.concat([
+            1.0, 0.0, tx,
+            0.0, 1.0, ty,
+        ]);
+    }
+
+    pub fn rotate(&mut self, radians: f32) {
+        let c = radians.cos();
+        let s = radians.sin();
+        self.concat([
+            c, -s, 0.0,
+            s,  c, 0.0,
+        ]);
+    }
+
+    pub fn rotate_about(&mut self, radians: f32, point: &Point) {
+        self.translate(-point.x, -point.y);
+        self.rotate(radians);
+        self.translate(point.x, point.y);
     }
 
     pub fn write(&self, path: &Path) {

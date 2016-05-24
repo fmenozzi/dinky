@@ -1,5 +1,6 @@
 use point::Point;
 
+#[derive(Copy, Clone)]
 pub struct Matrix {
     mat: [f32; 6],
 }

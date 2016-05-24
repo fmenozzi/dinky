@@ -305,6 +305,27 @@ fn draw_poly_rotate(pathstr: &str) {
     canvas.write(&Path::new(&pathstr));
 }
 
+fn draw_translate_rect(pathstr: &str) {
+    let mut canvas = Canvas::new(Bitmap::new(100, 100));
+    canvas.clear(&Color::white());
+
+    canvas.translate(25.0, 25.0);
+
+    let angle = std::f32::consts::PI / 8.0;
+
+    for i in 0..4 {
+        let f = i as f32;
+
+        canvas.rotate_about(angle, &Point::new(50.0, 50.0));
+
+        canvas.fill_rect(&Rect::make_wh(50.0, 50.0),
+                         //&Color::make_argb(0.5, 0.05*f, 0.0, 0.0));
+                         &Color::make_argb(0.5, 1.0, 0.0, 0.0));
+    }
+
+    canvas.write(&Path::new(&pathstr));
+}
+
 fn main() {
     draw_solid_ramp("results/ppm/solid_ramp.ppm");
     draw_blend_ramp(&Color::black(), "results/ppm/blend_black.ppm");
@@ -320,4 +341,6 @@ fn main() {
     draw_poly("results/ppm/poly.ppm");
     draw_poly_center("results/ppm/poly_center.ppm");
     draw_poly_rotate("results/ppm/poly_rotate.ppm");
+
+    draw_translate_rect("test.ppm");
 }
