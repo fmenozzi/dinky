@@ -31,7 +31,7 @@ impl Bitmap {
     pub fn read(&mut self, path: &Path) {
         let mut image = PPMImage::new(self.width, self.height);
 
-        image.read(&path);
+        image.read(path);
 
         self.width  = image.width;
         self.height = image.height;
@@ -53,6 +53,6 @@ impl Bitmap {
             }
         }
 
-        image.write(&path);
+        image.write(path);
     }
 }

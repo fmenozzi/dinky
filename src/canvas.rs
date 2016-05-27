@@ -45,7 +45,7 @@ impl Canvas {
 
         let srcrect = Rect::make_wh(src.width as f32, src.height as f32);
 
-        let r2r = map_rect_to_rect_mat(&srcrect, &dst);
+        let r2r = map_rect_to_rect_mat(&srcrect, dst);
         let r2r_floats = [
             r2r.at(0), r2r.at(1), r2r.at(2),
             r2r.at(3), r2r.at(4), r2r.at(5),
@@ -58,7 +58,7 @@ impl Canvas {
 
     pub fn fill_rect(&mut self, rect: &Rect, color: &Color) {
         let mut color_shader = Shaders::from_color(*color);
-        self.shade_rect(&rect, &mut color_shader);
+        self.shade_rect(rect, &mut color_shader);
     }
 
     pub fn shade_rect<S: Shader>(&mut self, rect: &Rect, shader: &mut S) {
@@ -209,6 +209,7 @@ impl Canvas {
 
         // Triangulate convex polygon
         let mut triangles: Vec<Triangle> = Vec::with_capacity(points.len() - 2);
+
         for i in 1..points.len()-1 {
             triangles.push(Triangle::new(points[0], points[i], points[i+1]));
         }
@@ -224,7 +225,7 @@ impl Canvas {
     }
 
     pub fn save(&mut self) {
-        let ctm = self.get_ctm().clone();
+        let ctm = self.get_ctm();
         self.ctms.push(ctm);
     }
 
@@ -233,7 +234,7 @@ impl Canvas {
     }
 
     pub fn concat(&mut self, mat: [f32; 6]) {
-        let ctm = self.get_ctm().clone();
+        let ctm = self.get_ctm();
         let len = self.ctms.len();
         self.ctms[len-1] = ctm.mul(&Matrix::new(mat));
     }
@@ -268,6 +269,6 @@ impl Canvas {
     }
 
     pub fn write(&self, path: &Path) {
-        self.bitmap.write(&path);
+        self.bitmap.write(path);
     }
 }
