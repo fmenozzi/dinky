@@ -21,7 +21,7 @@ pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
 }
 
 // TODO: Use slices instead of vectors for read access
-pub fn blend_row(src: &Vec<Pixel>, dst: &Vec<Pixel>) -> Vec<Pixel> {
+pub fn blend_row(src: &[Pixel], dst: &[Pixel]) -> Vec<Pixel> {
     assert!(src.len() == dst.len(), "src and dst rows not the same size");
 
     let mut res: Vec<Pixel> = Vec::with_capacity(src.len());

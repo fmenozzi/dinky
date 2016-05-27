@@ -39,7 +39,7 @@ impl PPMImage {
         // Read remaining nums into image buffer
         let nums = &nums[3..];
         for i in 0..width*height {
-            let r = nums[3*i + 0] as u8;
+            let r = nums[3*i] as u8;
             let g = nums[3*i + 1] as u8;
             let b = nums[3*i + 2] as u8;
 
@@ -50,7 +50,7 @@ impl PPMImage {
     pub fn write(&self, path: &Path) {
         // Fill up color buffer
         let (w, h) = (self.width, self.height);
-        let header = format!("P3\n");
+        let header = "P3\n".to_string();
         let dims   = format!("{} {} {}\n", w, h, 255);
         let mut bufstr = header + &dims;
         for i in 0..w*h {
