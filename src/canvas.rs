@@ -210,8 +210,8 @@ impl Canvas {
         // Triangulate convex polygon
         let mut triangles: Vec<Triangle> = Vec::with_capacity(points.len() - 2);
 
-        for window in points.windows(3) {
-            triangles.push(Triangle::new(window[0], window[1], window[2]));
+        for i in 1..points.len()-1 {
+            triangles.push(Triangle::new(points[0], points[i], points[i+1]));
         }
 
         // Shade each triangle
