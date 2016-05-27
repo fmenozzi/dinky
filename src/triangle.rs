@@ -22,8 +22,6 @@ impl Triangle {
         let ymin = self.a.y.min(self.b.y.min(self.c.y));
         let ymax = self.a.y.max(self.b.y.max(self.c.y));
 
-        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
-        rect.set_ltrb(xmin, ymin, xmax, ymax);
-        rect
+        Rect::make_ltrb(xmin, ymin, xmax, ymax)
     }
 }

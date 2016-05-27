@@ -23,17 +23,11 @@ impl ColorShader {
     }
 }
 impl Shader for ColorShader {
-    #[allow(unused_variables)]
-    fn shade_row(&self, x: usize, y: usize, count: usize) -> Vec<Pixel> {
-        let mut res = Vec::with_capacity(count);
-        for _ in 0..count {
-            res.push(self.src);
-        }
-        res
+    fn shade_row(&self, _x: usize, _y: usize, count: usize) -> Vec<Pixel> {
+        vec![self.src; count]
     }
 
-    #[allow(unused_variables)]
-    fn set_context(&mut self, ctm: [f32; 6]) -> bool {
+    fn set_context(&mut self, _ctm: [f32; 6]) -> bool {
         true
     }
 }

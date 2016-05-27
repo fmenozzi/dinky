@@ -314,13 +314,9 @@ fn draw_translate_rect(pathstr: &str) {
     let angle = std::f32::consts::PI / 8.0;
 
     for i in 0..4 {
-        let f = i as f32;
-
         canvas.rotate_about(angle, &Point::new(50.0, 50.0));
 
-        canvas.fill_rect(&Rect::make_wh(50.0, 50.0),
-                         //&Color::make_argb(0.5, 0.05*f, 0.0, 0.0));
-                         &Color::make_argb(0.5, 1.0, 0.0, 0.0));
+        canvas.fill_rect(&Rect::make_wh(50.0, 50.0), &Color::make_argb(0.5, 1.0, 0.0, 0.0));
     }
 
     canvas.write(&Path::new(&pathstr));

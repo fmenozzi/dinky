@@ -1,25 +1,19 @@
 pub struct Rect {
-    pub left:   f32,
-    pub top:    f32,
-    pub right:  f32,
-    pub bottom: f32,
+    left:   f32,
+    top:    f32,
+    right:  f32,
+    bottom: f32,
 }
 
 impl Rect {
     pub fn make_ltrb(l: f32, t: f32, r: f32, b: f32) -> Rect {
-        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
-        rect.set_ltrb(l,t,r,b);
-        rect
+        Rect{left: l, top: t, right: r, bottom: b}
     }
     pub fn make_xywh(x: f32, y: f32, w: f32, h: f32) -> Rect {
-        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
-        rect.set_xywh(x,y,w,h);
-        rect
+        Rect{left: x, top: y, right: x + w, bottom: y + h}
     }
     pub fn make_wh(w: f32, h: f32) -> Rect {
-        let mut rect = Rect{left: 0.0, top: 0.0, right: 0.0, bottom: 0.0};
-        rect.set_wh(w,h);
-        rect
+        Rect{left: 0.0, top: 0.0, right: w, bottom: h}
     }
 
     pub fn left(&self)   -> f32 { self.left   }
@@ -45,25 +39,6 @@ impl Rect {
         Rect::make_ltrb(round_left, round_top, round_right, round_bottom)
     }
 
-    pub fn set_ltrb(&mut self, l: f32, t: f32, r: f32, b: f32) {
-        self.left   = l;
-        self.top    = t;
-        self.right  = r;
-        self.bottom = b;
-    }
-    pub fn set_xywh(&mut self, x: f32, y: f32, w: f32, h: f32) {
-        self.left   = x;
-        self.top    = y;
-        self.right  = x + w;
-        self.bottom = y + h;
-    }
-    pub fn set_wh(&mut self, w: f32, h: f32) {
-        self.left   = 0.0;
-        self.top    = 0.0;
-        self.right  = w;
-        self.bottom = h;
-    }
-
     pub fn offset(&mut self, dx: f32, dy: f32) {
         self.left   += dx;
         self.top    += dy;
@@ -86,7 +61,10 @@ impl Rect {
         let b = self.bottom.min(other.bottom);
     
         if l < r && t < b {
-            self.set_ltrb(l,t,r,b);
+            self.left   = l;
+            self.top    = t;
+            self.right  = r;
+            self.bottom = b;
             true
         } else {
             false

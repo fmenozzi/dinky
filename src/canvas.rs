@@ -74,15 +74,15 @@ impl Canvas {
             // Split into two triangles and draw each
             let tri1 = Triangle {
                 // CW
-                a: Point::new(roi.left,  roi.top),
-                b: Point::new(roi.right, roi.top),
-                c: Point::new(roi.left, roi.bottom),
+                a: Point::new(roi.left(),  roi.top()),
+                b: Point::new(roi.right(), roi.top()),
+                c: Point::new(roi.left(),  roi.bottom()),
             };
             let tri2 = Triangle {
                 // CW
-                a: Point::new(roi.right, roi.top),
-                b: Point::new(roi.right, roi.bottom),
-                c: Point::new(roi.left,  roi.bottom),
+                a: Point::new(roi.right(), roi.top()),
+                b: Point::new(roi.right(), roi.bottom()),
+                c: Point::new(roi.left(),  roi.bottom()),
             };
             self.shade_tri(&tri1, shader);
             self.shade_tri(&tri2, shader);
@@ -142,10 +142,10 @@ impl Canvas {
         let mut xmax_i32 = (max(x1, max(x2, x3)) + 0xf) >> 4;
         let mut ymin_i32 = (min(y1, min(y2, y3)) + 0xf) >> 4;
         let mut ymax_i32 = (max(y1, max(y2, y3)) + 0xf) >> 4;
-        xmin_i32 = max(xmin_i32, roi.left   as i32);
-        xmax_i32 = min(xmax_i32, roi.right  as i32);
-        ymin_i32 = max(ymin_i32, roi.top    as i32);
-        ymax_i32 = min(ymax_i32, roi.bottom as i32);
+        xmin_i32 = max(xmin_i32, roi.left()   as i32);
+        xmax_i32 = min(xmax_i32, roi.right()  as i32);
+        ymin_i32 = max(ymin_i32, roi.top()    as i32);
+        ymax_i32 = min(ymax_i32, roi.bottom() as i32);
 
         // Half-edge constants
         let mut c1 = dy12*x1 - dx12*y1;
