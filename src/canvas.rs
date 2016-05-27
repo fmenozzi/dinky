@@ -51,7 +51,7 @@ impl Canvas {
             r2r.at(3), r2r.at(4), r2r.at(5),
         ];
 
-        let mut shader = Shaders::from_bitmap_mat(src, r2r_floats);
+        let mut shader = Shaders::from_bitmap(src, r2r_floats);
 
         self.shade_rect(&roi, &mut shader);
     }

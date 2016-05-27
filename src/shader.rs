@@ -87,7 +87,7 @@ impl Shaders {
         ColorShader::new(color)
     }
 
-    pub fn from_bitmap_mat(bitmap: &Bitmap, local: [f32; 6]) -> BitmapShader {
+    pub fn from_bitmap(bitmap: &Bitmap, local: [f32; 6]) -> BitmapShader {
         BitmapShader::new(bitmap, Matrix::new(local))
     }
 }

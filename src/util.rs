@@ -3,6 +3,10 @@ use rect::Rect;
 use matrix::Matrix;
 
 pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
+    if src.a == 255 {
+        return *src;
+    }
+
     let magic: u32 = (1<<16) | (1<<8) | 1;
 
     let (dst_a, src_a) = (dst.a as u32, src.a as u32);
@@ -20,15 +24,14 @@ pub fn blend(src: &Pixel, dst: &Pixel) -> Pixel {
     Pixel::pack_argb(final_a as u8, final_r as u8, final_g as u8, final_b as u8)
 }
 
-// TODO: Use slices instead of vectors for read access
 pub fn blend_row(src: &[Pixel], dst: &[Pixel]) -> Vec<Pixel> {
     assert!(src.len() == dst.len(), "src and dst rows not the same size");
 
-    let mut res: Vec<Pixel> = Vec::with_capacity(src.len());
-    for i in 0..src.len() {
-        res.push(if src[i].a == 255 {src[i]} else {blend(&src[i], &dst[i])});
-    }
-    res
+    src.iter()
+       .zip(dst)
+       .map(|(srcpx, dstpx)| {
+            blend(srcpx, dstpx)
+       }).collect::<Vec<_>>()
 }
 
 pub fn map_rect_to_rect_mat(src: &Rect, dst: &Rect) -> Matrix {
