@@ -322,6 +322,22 @@ fn draw_translate_rect(pathstr: &str) {
     canvas.write(&Path::new(&pathstr));
 }
 
+/*
+fn test() {
+    let mut canvas = Canvas::new(Bitmap::new(100, 100));
+
+    let points = [
+        Point::new(50.0, 25.0),
+        Point::new(75.0, 50.0),
+        Point::new(50.0, 75.0),
+        Point::new(25.0, 50.0),
+    ];
+    canvas.fill_convex_polygon(&points, &Color::red());
+
+    canvas.write(&Path::new("test.ppm"));
+}
+*/
+
 fn main() {
     draw_solid_ramp("results/ppm/solid_ramp.ppm");
     draw_blend_ramp(&Color::black(), "results/ppm/blend_black.ppm");
@@ -339,4 +355,6 @@ fn main() {
     draw_poly_rotate("results/ppm/poly_rotate.ppm");
 
     draw_translate_rect("test.ppm");
+
+    //test();
 }

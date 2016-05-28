@@ -4,6 +4,7 @@ use pixel::Pixel;
 use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
+use std::io::BufWriter;
 
 pub struct PPMImage {
     pub width:  usize,
@@ -52,7 +53,7 @@ impl PPMImage {
     pub fn write(&self, path: &Path) {
         let (w, h) = (self.width, self.height);
 
-        let mut file = File::create(&path).unwrap();
+        let mut file = BufWriter::with_capacity(w*h*20, File::create(&path).unwrap());
 
         write!(file, "P3\n").unwrap();
         write!(file, "{} {} {}\n", w, h, 255).unwrap();
@@ -72,6 +73,7 @@ impl PPMImage {
         }
 
         // Below method is clunkier, but faster.
+        /*
         // Fill up color buffer
         let (w, h) = (self.width, self.height);
         let header = "P3\n".to_string();
@@ -96,6 +98,7 @@ impl PPMImage {
         // Write color buffer to .ppm file
         let mut file = File::create(path).unwrap();
         file.write_all(bufstr.as_bytes()).unwrap();
+        */
     }
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
