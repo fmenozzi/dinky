@@ -71,34 +71,6 @@ impl PPMImage {
 
             write!(file, "{} {} {}\n", r, g, b).unwrap();
         }
-
-        // Below method is clunkier, but faster.
-        /*
-        // Fill up color buffer
-        let (w, h) = (self.width, self.height);
-        let header = "P3\n".to_string();
-        let dims   = format!("{} {} {}\n", w, h, 255);
-        let mut bufstr = header + &dims;
-        for i in 0..w*h {
-            let pixel = self.colors[i].to_pixel();
-
-            // Undo premul
-            let (a, mut r, mut g, mut b) = (pixel.a, pixel.r, pixel.g, pixel.b);
-            if a != 0 && a != 255 {
-                r = ((r as i32 * 255 + a as i32/2) / a as i32) as u8;
-                g = ((g as i32 * 255 + a as i32/2) / a as i32) as u8;
-                b = ((b as i32 * 255 + a as i32/2) / a as i32) as u8;
-            }
-
-            let colorstr = format!("{} {} {}\n", r, g, b);
-
-            bufstr = bufstr + &colorstr;
-        }
-
-        // Write color buffer to .ppm file
-        let mut file = File::create(path).unwrap();
-        file.write_all(bufstr.as_bytes()).unwrap();
-        */
     }
 
     pub fn set(&mut self, x: usize, y: usize, c: &Color) {
